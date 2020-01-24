@@ -1,5 +1,5 @@
 # requirements.txt
 
-ansible>=2.9,<2.10
-molecule[podman]>=3.0,<4.0
-podman>=1.6,<2.0
+ansible>=2.9
+molecule>=2.0,<3.0
+podman>=1.6

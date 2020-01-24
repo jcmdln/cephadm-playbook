@@ -4,10 +4,25 @@
 # cephadm-ansible
 #
 
-!inventory.sample.yml
-!vars/groups/*.sample.yml
-!vars/hosts/*.sample.yml
+# Ignore everything other than what we specifically whitelist
+*
 
+# Allow descending into directories for future rules
+!*/
+
+# Basic git-related bits
+.gitignore
+
+# Globally track "*.sample.yml" files created in any directory. This
+# implicitly handles our provided samples in various directories.
+!*.sample.yml
+
+# Include everything we put into the following directories.
+!/audits/**
+!/docs/**
+!/modules/**
+!/plays/**
+!/roles/**
 
 #
 # Python
