@@ -1,43 +1,62 @@
-ceph-playbook
-==============================
+cephadm-ansible
+===================
+**Automate deploying Ceph using cephadm and podman at scale**
 
-This Ansible Playbook uses the new Ceph Orchestrator SSH module to
-provision a Ceph cluster.
+About
+===================
+[cephadm-ansible] exists to utilize the upstream [Ceph Orchestrator]
+and its SSH module wrapped in an Ansible playbook that deploys and
+isolates services using [podman]. The intention is to explore creating
+an alternative to [ceph-ansible] that more closely aligns with the
+needs and deployment strategy employed by [kolla-ansible].
 
-* https://docs.ceph.com/docs/nautilus/start/
-* https://docs.ceph.com/docs/nautilus/mgr/orchestrator_cli/
-
-
-Why?
-==============================
-
-[ceph-ansible] is alright, but:
-* The documentation is imprecise
-* Requires a disjointed mix of Ansible and in-situ CLI to manage things
-* Doesn't follow upstream Ceph recommendations
-
-[ceph-deploy] is closer, but:
-* Is a bit too manual
-
-What can we do to improve deploying Ceph clusters?
-
-[ceph-ansible]: https://github.com/ceph/ceph-ansible
-[ceph-deploy]: https://github.com/ceph/ceph-deploy
-
-
-Goals
-==============================
-* Follow Ceph recommendations
-* Use Ansible to deploy, CLI to manage
-* Documentation per-file and formal usage information
-* Use [systemd-nspawn] to control resources
+This playbook will allow a user to deploy a standalone [Ceph] cluster
+that trivializes integrating with [kolla-ansible], and follows
+official [Ceph] recommended practices by default.
 
 
 Usage
-==============================
+===================
 
-TBD
+Caveats
+-------------------
+Before we go into too much detail, let's clarify the locations of
+common Ansible files/folders as they have been changed to reduce
+clutter in the top-level directory.  While this is entirely arbitrary
+and adding confusion, the tradeoff of having a subjectively "cleaner"
+repository will (hopefully) be a net benefit.
+
+Here's a rough legend for explaining the altered hierarchy, or at
+least what is non-standard:
 
 ```sh
-$ wew lad
+$ tree
+.
+├── modules         # ie 'library'
+├── plays           # arbitrary location for site.*.yml files
+├── plugins
+│   ├── actions     # ie 'action_plugins'
+│   ├── callbacks   # ie 'callback_plugins'
+│   └── filters     # ie 'filter_plugins'
+└── vars
+    ├── groups      # ie 'group_vars'
+    └── hosts       # ie 'host_vars'
 ```
+
+Quick Start
+-------------------
+
+
+Sources
+===================
+* [cephadm]
+* [Podman]
+
+
+[ceph]: ceph.com
+[ceph orchestrator]: https://docs.ceph.com/docs/master/mgr/orchestrator_cli/
+[ceph-ansible]: https://github.com/ceph/ceph-ansible
+[cephadm]: https://docs.ceph.com/docs/master/bootstrap
+[cephadm-ansible]: https://github.com/jcmdln/cephadm-ansible
+[kolla-ansible]: https://github.com/openstack/kolla-ansible
+[podman]: https://podman.io/

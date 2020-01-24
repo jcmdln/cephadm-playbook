@@ -1,0 +1,7 @@
+---
+# inventory.sample.yml
+
+arbitrary:
+  hosts:
+    localhost:
+      ansible_connection: local

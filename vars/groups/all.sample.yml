@@ -1,0 +1,58 @@
+---
+# all.sample.yml
+
+#
+# Ceph
+#
+
+ceph_origin: repository
+ceph_release: nautilus
+ceph_repository: community
+
+#
+# Network
+#
+
+network_private: 0.0.0.0/24
+network_public: 0.0.1.0/24
+
+network_interface_mon: eth1
+network_interface_rgw: eth2
+
+#
+# Configuration
+#
+
+# Add or override settings that end up in /etc/ceph.conf
+ceph_conf:
+  something: ""
+
+#
+# MGRs
+#
+
+ceph_mgr_modules:
+  - pg_autoscaler
+
+# Add or override settings that end up in the ceph-mgr config database
+ceph_mgr_conf:
+  osd_pool_default_pg_autoscale_mode: "on"
+
+#
+# OSDs
+#
+
+osd_per_device:
+  hdd: 1
+  ssd: 2
+  nvme: 4
+
+devices:
+  mixed:
+    block:
+      - /dev/sda
+    wal:
+      - /dev/nvme0n1
+  fast:
+    block:
+      - /dev/nvme0n1
