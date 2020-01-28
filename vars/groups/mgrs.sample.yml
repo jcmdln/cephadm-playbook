@@ -1,0 +1,5 @@
+---
+# mgrs.sample.yml
+
+ceph_mgr_modules:
+  - pg_autoscaler

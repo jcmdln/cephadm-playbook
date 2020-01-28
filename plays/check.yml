@@ -1,12 +1,9 @@
 ---
 # check.yml
 
-# First we should ensure that all hosts defined in the inventory can
-# pass some basic tests.  As much as possible, we should attempt to
-# invalidate hosts to prevent issues or errors later on.
-
-- name: Ensure hosts meet the prerequisites
+- name: check that hosts meet the requirements
   any_errors_fatal: true
+  gather_facts: false
   tags: always
   hosts: all
 
@@ -18,6 +15,10 @@
       changed_when: false
       failed_when: not python_installed
 
+    - name: Gather host facts for later tasks
+      setup:
+
+  tasks:
     - name: Determine if host OS is supported
       command: uname -a # Trick Ansible into doing our conditionals
       vars:
@@ -28,6 +29,6 @@
           - OpenBSD-6.6
           - Ubuntu-18.04
           - Ubuntu-20.04
-      when: target in targets
       changed_when: false
       failed_when: target not in targets
+      when: target in targets

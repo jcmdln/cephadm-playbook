@@ -1,0 +1,11 @@
+---
+# network.sample.yml
+
+ceph_network_external: 192.168.1.0/24
+ceph_network_external_vip: ""
+ceph_network_internal: 192.168.0.0/24
+ceph_network_internal_vip: ""
+
+ceph_mgr_interface: eth1
+ceph_mon_interface: eth2
+ceph_rgw_interface: eth3

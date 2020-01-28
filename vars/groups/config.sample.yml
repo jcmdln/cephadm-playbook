@@ -1,0 +1,21 @@
+---
+# config.sample.yml
+
+# Add or override settings that end up in '/etc/ceph.conf'.  Note that
+# Ceph does not read _all_ possible settings from this file, and will
+# result in divergence between CLI and Dashboard behavior if you
+# attempt to abuse it.
+ceph_config:
+  - name: something
+    value: ""
+
+# Run custom Ceph commands.
+#
+# Note that the command prefix 'ceph' will be added to somewhat prevent
+# using this mechanism as an arbitrary vector for changes.
+ceph_config_cmds:
+  # Ensure pg_autoscale is enabled globally
+  - osd set global osd_pool_default_pg_autoscale_mode on
+
+  # Create a custom 8:2 erasure coding profile
+  - osd erasure-code-profile set ec-8_2 k=8 m=2

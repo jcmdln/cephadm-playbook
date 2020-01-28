@@ -89,6 +89,15 @@ $ ansible-playbook play/purge.yml
 
 Methodology
 ==============================
+A loose, un-ordered series of notes about how things are designed.
+
+* All variables are prefixed with `ceph_*`, hopefully allowing this
+  playbook to be imported into others without much hassle.
+* There's no point in making gratuitous re-declarations of BlueStore
+  defaults.  If Ceph has default settings, **use them**.
+* If anything can be calculated reliably, do some math rather than
+  providing a list or range of options.
+
 
 [ceph]: ceph.com
 [ceph orchestrator]: https://docs.ceph.com/docs/master/mgr/orchestrator_cli/
