@@ -26,7 +26,6 @@
         targets:
           - Alpine-3.11
           - CentOS-8
-          - OpenBSD-6.6
           - Ubuntu-18.04
           - Ubuntu-20.04
       changed_when: false
