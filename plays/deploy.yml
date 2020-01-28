@@ -1,0 +1,33 @@
+---
+# deploy.yml
+
+
+
+- name: Ensure hosts meet the prerequisites
+  any_errors_fatal: true
+  tags: always
+  hosts: all
+
+  pre_tasks:
+    - name: Ensure some version of Python is installed and accessible
+      raw: |
+        command -v python
+      register: python_installed
+      changed_when: false
+      failed_when: not python_installed
+
+#
+#
+
+# - name: Review defined hosts
+#   any_errors_fatal: true
+#   tags: always
+#   hosts:
+#     - mgrs
+#     - mons
+#     - osds
+#     - rgws
+#     - rgwlbs
+#   roles:
+#     - prepare
+#     - setup

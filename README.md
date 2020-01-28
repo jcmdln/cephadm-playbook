@@ -23,21 +23,12 @@ Goals
 * All of the above must also work **flawlessly** with [kolla-ansible]
 
 Platform Support
--------------------
-We'll track and support specific Linux distributions that meet the
-following conditions:
-
-1. Has a long-term support release
-2. Has a new enough kernel available to support _all_ auditing scripts
-3.
-
-See [Supported Platforms](#supported-platforms) for a list of
-platforms that currently meet our requirements.
-
-### Supported Platforms
-| Operating System | Quality |
-| ---------------- | ------- |
-| Ubuntu 20.04LTS+ | None, planned
+==============================
+| Operating System   | Quality |
+| ------------------ | ------- |
+| Alpine Linux 3.11+ | None, planned
+| CentOS 8.x+        | None, planned
+| Ubuntu 20.04LTS+   | None, planned
 
 
 Usage
@@ -71,6 +62,33 @@ $ tree
 Quick Start
 -------------------
 
+1. Check that all hosts pass our tests
+```sh
+$ ansible-playbook play/check.yml
+```
+
+2. Deploy this playbook
+```sh
+$ ansible-playbook play/deploy.yml
+```
+
+3. Change minor/patch versions
+```sh
+$ ansible-playbook play/update.yml
+```
+
+4. Handle changing between major versions
+```sh
+$ ansible-playbook play/upgrade.yml
+```
+
+5. Tear the cluster down
+```sh
+$ ansible-playbook play/purge.yml
+```
+
+Methodology
+==============================
 
 [ceph]: ceph.com
 [ceph orchestrator]: https://docs.ceph.com/docs/master/mgr/orchestrator_cli/
