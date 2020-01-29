@@ -5,6 +5,7 @@
   any_errors_fatal: true
   tags: always
   hosts: mons[0]
+
   pre_tasks:
     - name: Check if cephadm is installed
       command: command -v cephadm
@@ -16,6 +17,7 @@
         name: cephadm>=1.0.0,<2.0.0
         state: present
       when: not cephadm_installed
+
   tasks:
     # TODO: allow using a defined interface _OR_ a specific IP address
     - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
@@ -38,6 +40,11 @@
         - all!mons[0]
 
 - name: Deploy additional monitors
+  any_errors_fatal: true
+  tags: always
+  hosts: mons[0]
+
+- name: Create OSDs
   any_errors_fatal: true
   tags: always
   hosts: mons[0]
