@@ -1,21 +1,43 @@
 ---
 # deploy.yml
 
-- name: Review defined hosts
+- name: Bootstrap the first ceph-mon host
   any_errors_fatal: true
   tags: always
-  hosts:
-    - mgrs
-    - mons
-    - osds
-    - rgws
-    - rgwlbs
+  hosts: mons[0]
+  pre_tasks:
+    - name: Check if cephadm is installed
+      command: command -v cephadm
+      register: cephadm_installed
+      changed_when: not cephadm_installed
 
-  # pre_tasks:
-  #   - name: Add Ceph repository to OSs that suck at life
-
-  tasks:
-    - name: Install Ceph packages
-      package:
-        name: "{{ ceph_packages }}"
+    - name: Install cephadm via pip
+      pip:
+        name: cephadm>=1.0.0,<2.0.0
         state: present
+      when: not cephadm_installed
+  tasks:
+    # TODO: allow using a defined interface _OR_ a specific IP address
+    - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
+      command: |
+        cephadm bootstrap --mon-ip
+        {{ ansible_facts[interface]['ipv4'][0]['address'] }}
+
+    # TODO: Do we really need to prep the container now?
+    - name: Mount Ceph utilities container and expose to host
+      command: |
+        cephadm shell --config ceph.conf --keyring ceph.client.admin.keyring
+
+    # TODO: hosts wouldn't be authed with each other, so this wouldn't
+    # actually work.
+    - name: Sync Ceph keys
+      synchronize:
+        src: /fake/path
+        dest: "rsync://{{ item }}/wew/lad"
+      with_inventory_hostnames:
+        - all!mons[0]
+
+- name: Deploy additional monitors
+  any_errors_fatal: true
+  tags: always
+  hosts: mons[0]
