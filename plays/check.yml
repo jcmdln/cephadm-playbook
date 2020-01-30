@@ -12,14 +12,14 @@
       raw: |
         command -v python
       register: python_installed
-      changed_when: not python_installed
+      changed_when: false
       failed_when: not python_installed
 
     - name: check if pip is installed and accessible
       raw: |
         command -v pip
       register: pip_installed
-      changed_when: not pip_installed
+      changed_when: false
       failed_when: not pip_installed
 
     - name: Gather facts for later tasks
@@ -52,5 +52,17 @@
         - nic and IPs don't match
 
     - name: check if hosts are able to reach each other
+      command: |-
+        ping {{ ansible_facts[item][ipv4][something]}}
+      register: ping_result
+      with_inventory_items: all
+      changed_when: false
+      failed_when:
+        - ping_result.rc > 0
+        - "error" in ping_result.stdout
 
     - name: check if devices in storage_devices exist
+      command: |-
+        fdisk {{ item }}
+      when: item in storage_devices
+      with_items: storage_devices

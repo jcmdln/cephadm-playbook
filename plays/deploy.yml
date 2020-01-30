@@ -22,13 +22,15 @@
     # TODO: allow using a defined interface _OR_ a specific IP address
     - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
       command: |-
-        cephadm bootstrap --mon-ip
-        {{ ansible_facts[interface]['ipv4'][0]['address'] }}
+        cephadm bootstrap
+        --mon-ip {{ ansible_facts[interface]['ipv4'][0]['address'] }}
 
     # TODO: Do we really need to prep the container now?
     - name: Mount Ceph utilities container and expose to host
       command: |-
-        cephadm shell --config ceph.conf --keyring ceph.client.admin.keyring
+        cephadm shell
+        --config ceph.conf
+        --keyring ceph.client.admin.keyring
 
     # TODO: hosts wouldn't be authed with each other, so this wouldn't
     # actually work.
