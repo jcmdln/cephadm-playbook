@@ -47,10 +47,10 @@
 
   tasks:
     # TODO: not actually a hard requirement
-    - name: check defined network interfaces
+    - name: check defined network interfaces exist
       failed_when:
         - nic and IPs don't match
 
     - name: check if hosts are able to reach each other
 
-    - name: check if storage_devices exist
+    - name: check if devices in storage_devices exist
