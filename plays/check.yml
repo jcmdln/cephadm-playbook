@@ -1,7 +1,7 @@
 ---
 # check.yml
 
-- name: check that hosts meet the requirements
+- name: check that hosts meet the basic requirements
   any_errors_fatal: true
   gather_facts: false
   tags: always
@@ -9,14 +9,14 @@
 
   pre_tasks:
     - name: check if some version of Python is installed and accessible
-      raw: |
+      raw: |-
         command -v python
       register: python_installed
       changed_when: false
       failed_when: not python_installed
 
     - name: check if pip is installed and accessible
-      raw: |
+      raw: |-
         command -v pip
       register: pip_installed
       changed_when: false
@@ -27,7 +27,8 @@
 
   tasks:
     - name: check if host OS is supported
-      command: uname -a # Trick Ansible into doing our conditionals
+      fail:
+        msg: "Reported host OS not supported"
       vars:
         target: "{{ ansible_distribution }}-{{ ansible_distribution_version }}"
         targets:
@@ -37,32 +38,39 @@
           - Ubuntu-20.04
       changed_when: false
       failed_when: target not in targets
-      when: target in targets
 
 - name: check if current configuration is valid for all hosts
   any_errors_fatal: true
-  gather_facts: false
+  #gather_facts: false
   tags: always
   hosts: all
 
   tasks:
-    # TODO: not actually a hard requirement
-    - name: check defined network interfaces exist
-      failed_when:
-        - nic and IPs don't match
+    - name: check if defined network interfaces exist
+      fail:
+        msg: "The interface {{ item }} does not exist"
+      changed_when: false
+      failed_when: interface not in interfaces
+      vars:
+        interface: "{{ item }}"
+        interfaces: "{{ ansible_facts['interfaces'] }}"
+      with_items:
+        - "{{ ceph_mrg_interface }}"
+        - "{{ ceph_mon_interface }}"
+        - "{{ ceph_rgw_interface }}"
 
     - name: check if hosts are able to reach each other
       command: |-
-        ping {{ ansible_facts[item][ipv4][something]}}
-      register: ping_result
-      with_inventory_items: all
+        ping -c 1 {{ item['address'] }}
       changed_when: false
-      failed_when:
-        - ping_result.rc > 0
-        - "error" in ping_result.stdout
+      failed_when: ping_result.rc > 0
+      register: ping_result
+      with_items: "{{ ansible_facts['iwm0']['ipv4'] }}"
 
-    - name: check if devices in storage_devices exist
-      command: |-
-        fdisk {{ item }}
-      when: item in storage_devices
-      with_items: storage_devices
+    # TODO: This is a bit tricky, haven't found a way of enumerating
+    # arbitrary devices in multiple pools yet.  Well, at least
+    # something that isn't hacky and gross.
+    # - name: check if devices in ceph_storage_devices exist
+    #   fail:
+    #     msg: "The storage device {{ item }} does not exist"
+    #   with_items: "{{ ceph_storage_devices }}"
