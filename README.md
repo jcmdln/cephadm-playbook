@@ -62,7 +62,7 @@ $ tree
 Quick Start
 -------------------
 
-1. Check that all hosts pass our tests
+1. Check for any potential issues
 ```sh
 $ ansible-playbook play/check.yml
 ```
@@ -72,17 +72,17 @@ $ ansible-playbook play/check.yml
 $ ansible-playbook play/deploy.yml
 ```
 
-3. Change minor/patch versions
-```sh
-$ ansible-playbook play/update.yml
-```
-
-4. Handle changing between major versions
+3. Upgrade the deployment
 ```sh
 $ ansible-playbook play/upgrade.yml
 ```
 
-5. Tear the cluster down
+3. Downgrade the deployment
+```sh
+$ ansible-playbook play/downgrade.yml
+```
+
+5. Tear the deployment down
 ```sh
 $ ansible-playbook play/purge.yml
 ```
@@ -97,6 +97,8 @@ A loose, un-ordered series of notes about how things are designed.
   defaults.  If Ceph has default settings, **use them**.
 * If anything can be calculated reliably, do some math rather than
   providing a list or range of options.
+* Before deploying, users must feel safe that our `check.yml` play
+  caught any potential issues.
 
 
 [ceph]: ceph.com
