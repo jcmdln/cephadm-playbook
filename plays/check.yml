@@ -41,7 +41,7 @@
 
 - name: check if current configuration is valid for all hosts
   any_errors_fatal: true
-  #gather_facts: false
+  gather_facts: false
   tags: always
   hosts: all
 
@@ -67,10 +67,27 @@
       register: ping_result
       with_items: "{{ ansible_facts['iwm0']['ipv4'] }}"
 
-    # TODO: This is a bit tricky, haven't found a way of enumerating
-    # arbitrary devices in multiple pools yet.  Well, at least
-    # something that isn't hacky and gross.
-    # - name: check if devices in ceph_storage_devices exist
-    #   fail:
-    #     msg: "The storage device {{ item }} does not exist"
-    #   with_items: "{{ ceph_storage_devices }}"
+    - name: enumerate storage devices in ceph_storage_devices
+      set_fact:
+        ceph_storage_devices_defined: "{{ defined_devices|unique }}"
+      failed_when:
+        - ceph_storage_devices is undefined
+        - ceph_storage_devices | length < 1
+      vars:
+        devices: "{{ ceph_storage_devices[item.key] }}"
+        defined_devices:
+          - "{{ devices['block'] }}"
+          - "{{ devices['db']  if devices['db']  is defined else [] }}"
+          - "{{ devices['wal'] if devices['wal'] is defined else [] }}"
+      with_items: "{{ ceph_storage_devices | dict2items }}"
+
+    - name: enumerate storage devices in ansible_facts['devices']
+      set_fact:
+        ceph_storage_devices_found: "{{ item.split(':')[0] }}"
+      with_items: "{{ ansible_facts['devices'] }}"
+
+    - name: check if defined devices can be found
+      fail:
+        msg: "{{ item }}"
+      failed_when: item not in ceph_storage_devices_found
+      with_items: "{{ ceph_storage_devices_defined }}"
