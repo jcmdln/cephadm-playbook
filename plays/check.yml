@@ -28,7 +28,7 @@
   tasks:
     - name: check if host OS is supported
       fail:
-        msg: "Reported host OS not supported"
+        msg: "Reported host OS {{ target }} not supported"
       vars:
         target: "{{ ansible_distribution }}-{{ ansible_distribution_version }}"
         targets:
