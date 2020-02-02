@@ -46,6 +46,12 @@
   hosts: all
 
   tasks:
+    - name: check if ceph_private_interface is defined
+      fail:
+        msg: "The variable ceph_private_interface is undefined!"
+      changed_when: false
+      failed_when: ceph_private_interface is undefined
+
     - name: check if defined network interfaces exist
       fail:
         msg: "The interface {{ item }} does not exist"
@@ -55,17 +61,20 @@
         interface: "{{ item }}"
         interfaces: "{{ ansible_facts['interfaces'] }}"
       with_items:
-        - "{{ ceph_mrg_interface }}"
-        - "{{ ceph_mon_interface }}"
-        - "{{ ceph_rgw_interface }}"
+        - "{{ ceph_private_interface }}"
+        - "{{ ceph_public_interface if ceph_public_interface != ceph_private_interface else [] }}"
 
-    - name: check if hosts are able to reach each other
-      command: |-
-        ping -c 1 {{ item['address'] }}
-      changed_when: false
-      failed_when: ping_result.rc > 0
-      register: ping_result
-      with_items: "{{ ansible_facts['iwm0']['ipv4'] }}"
+    # TODO: this bit is too naive, but is decent scaffolding.
+    #
+    # - name: check if hosts are able to reach each other
+    #   command: |-
+    #     ping -c 1 {{ item['address'] }}
+    #   changed_when: false
+    #   failed_when: ping_result.rc > 0
+    #   register: ping_result
+    #   with_items:
+    #     - "{{ ansible_facts[ceph_private_interface]['ipv4'] }}"
+    #     - "{{ ansible_facts[ceph_private_interface]['ipv4'] if ceph_public_interface != ceph_private_interface else [] }}"
 
     - name: enumerate storage devices in ceph_storage_devices
       set_fact:
@@ -83,11 +92,13 @@
 
     - name: enumerate storage devices in ansible_facts['devices']
       set_fact:
-        ceph_storage_devices_found: "{{ item.split(':')[0] }}"
-      with_items: "{{ ansible_facts['devices'] }}"
+        ceph_storage_devices_found: "{{ found_devices }}"
+      vars:
+        found_devices: "{{ ansible_facts['devices'].keys() | list }}"
 
     - name: check if defined devices can be found
       fail:
         msg: "{{ item }}"
+      changed_when: false
       failed_when: item not in ceph_storage_devices_found
       with_items: "{{ ceph_storage_devices_defined }}"

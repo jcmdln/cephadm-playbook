@@ -3,24 +3,13 @@
 
 singlenode:
   hosts:
-    localhost:
-      ansible_connection: local
-
-      # Vars for testing
-      ceph_mrg_interface: iwm0
-      ceph_mon_interface: iwm0
-      ceph_rgw_interface: iwm0
+    node-1.aswl.org:
+      ceph_private_interface: eno1
+      ceph_public_interface: "{{ ceph_private_interface }}"
       ceph_storage_devices:
-        - name: fast
+        fast:
           block:
-            - sd0
-          blockdb:
-            - sd0
-        - name: faster
-          block:
-            - sd0
-          wal:
-            - sd0
+            - sdb
 
 # These are hosts we should copy Ceph client authentication keys to in
 # order for them to use the Ceph deployment.  The intended use-case is
