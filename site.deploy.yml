@@ -7,24 +7,40 @@
   hosts: mons[0]
 
   pre_tasks:
-    - name: Check if cephadm is installed
-      command: command -v cephadm
-      register: cephadm_installed
-      changed_when: cephadm_installed.rc > 0
-      failed_when: false
-
-    - name: Install cephadm via pip
-      pip:
-        name: cephadm>=1.0.0,<2.0.0
+    - name: Install package dependencies
+      package:
+        name: "{{ ceph_package_dependencies }}"
         state: present
-      when: cephadm_installed.changed
+      vars:
+        ceph_package_dependencies:
+          - docker.io
+          - python-pip
 
-#   tasks:
-#     # TODO: allow using a defined interface _OR_ a specific IP address
-#     - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
-#       command: |-
-#         cephadm bootstrap
-#         --mon-ip {{ ansible_facts[interface]['ipv4'][0]['address'] }}
+    - name: Start package services
+      service:
+        name: "{{ item }}"
+        state: started
+      with_items:
+        - docker
+
+    - name: Install pip dependencies
+      pip:
+        name: "{{ ceph_pip_dependencies }}"
+        state: present
+      vars:
+        ceph_pip_dependencies:
+          - cephadm>=1.0.0,<2.0.0
+          - docker>=4.1.0,<5.0.0
+
+  # tasks:
+  #   # TODO: allow using a defined interface _OR_ a specific IP address
+  #   - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
+  #     command: |-
+  #       cephadm bootstrap
+  #       --skip-ping-check
+  #       {{ "--skip-dashboard" if not ceph_dashboard else omit }}
+  #       {{ if ceph_dashboard --initial-dashboard-user ceph_dashboard_username --initial-dashboard-password ceph_dashboard_password }}
+  #       --mon-ip {{ ansible_facts[ceph_network_private_interface]['ipv4'][0]['address'] }}
 
 #     # TODO: Do we really need to prep the container now?
 #     - name: Mount Ceph utilities container and expose to host

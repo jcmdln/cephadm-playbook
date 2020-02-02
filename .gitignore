@@ -20,6 +20,9 @@
 # Include all site.*.yml files, which are our defined "plays"
 !site.*.yml
 
+# Include everything in the defined directories
+!library/**
+
 #
 # Python
 # - https://github.com/github/gitignore/blob/master/Python.gitignore

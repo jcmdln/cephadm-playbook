@@ -2,14 +2,22 @@
 # all.sample.yml
 
 #
-# Config
+# Ceph
 #
+
+# Whether the Ceph Dashboard should be deployed
+ceph_dashboard: true
+
+# When deploying the Ceph Dashboard, use the following username and
+# password as the credentials.
+ceph_dashboard_username: "admin"
+ceph_dashboard_password: "admin"
 
 # Add or override settings that end up in '/etc/ceph.conf'.  Note that
 # Ceph does not read _all_ possible settings from this file, and will
 # result in divergence between CLI and Dashboard behavior if you
 # attempt to abuse it.
-ceph_config:
+ceph_conf:
   - name: something
     value: ""
 
@@ -35,6 +43,9 @@ ceph_network_private_vip: ""
 ceph_network_public_interface: "{{ ceph_network_private_interface }}"
 ceph_network_public_ips: "{{ ceph_network_private_ips }}"
 ceph_network_public_vip: "{{ ceph_network_private_vip }}"
+
+# Whether to configure firewalld
+ceph_firewall_firewalld: true
 
 #
 # OSDs

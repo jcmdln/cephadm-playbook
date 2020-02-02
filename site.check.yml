@@ -20,10 +20,16 @@
       register: pip_installed
       changed_when: false
 
-    - name: Gather facts for later tasks
-      setup:
+    - name: check if docker is installed and accessible
+      raw: |-
+        command -v docker
+      register: docker_installed
+      changed_when: false
 
   tasks:
+    - name: Gather facts
+      setup:
+
     - name: check if host OS is supported
       fail:
         msg: "Reported host OS {{ target }} not supported"
