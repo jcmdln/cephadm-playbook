@@ -28,13 +28,13 @@ ceph_config_cmds:
 # Network
 #
 
-ceph_network_public_interface: "{{ ceph_private_interface }}"
-ceph_network_public_ips: 192.168.1.0/24
-ceph_network_public_vip: ""
-
 ceph_network_private_interface: eno1
-ceph_network_private_ips: 192.168.0.0/24
+ceph_network_private_ips: 192.168.1.0/24
 ceph_network_private_vip: ""
+
+ceph_network_public_interface: "{{ ceph_network_private_interface }}"
+ceph_network_public_ips: "{{ ceph_network_private_ips }}"
+ceph_network_public_vip: "{{ ceph_network_private_vip }}"
 
 #
 # OSDs
@@ -93,4 +93,7 @@ ceph_osd_per_device:
 # better visualize how variables can be changed (as well as showing the
 # default values) I've additionally annotated them.  Hopefully this
 # makes things clear enough.
-ceph_storage_devices: []
+ceph_storage_devices:
+  fast:
+    block:
+      - /dev/sdb

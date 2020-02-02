@@ -113,7 +113,9 @@
 
     - name: check if defined devices can be found
       fail:
-        msg: "{{ item }}"
+        msg: "The defined device {{ device }} was not found!"
       changed_when: false
-      failed_when: item not in ceph_storage_devices_found
+      failed_when: device not in ceph_storage_devices_found
+      vars:
+        device: "{{ item.split(':')[0].split('/dev/')[1] }}"
       with_items: "{{ ceph_storage_devices_defined }}"
