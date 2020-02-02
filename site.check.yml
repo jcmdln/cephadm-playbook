@@ -46,11 +46,11 @@
   hosts: all
 
   tasks:
-    - name: check if ceph_private_interface is defined
+    - name: check if ceph_network_private_interface is defined
       fail:
-        msg: "The variable ceph_private_interface is undefined!"
+        msg: "The variable ceph_network_private_interface is undefined!"
       changed_when: false
-      failed_when: ceph_private_interface is undefined
+      failed_when: ceph_network_private_interface is undefined
 
     - name: check if defined network interfaces exist
       fail:
@@ -61,8 +61,8 @@
         interface: "{{ item }}"
         interfaces: "{{ ansible_facts['interfaces'] }}"
       with_items:
-        - "{{ ceph_private_interface }}"
-        - "{{ ceph_public_interface if ceph_public_interface != ceph_private_interface else [] }}"
+        - "{{ ceph_network_private_interface }}"
+        - "{{ ceph_network_public_interface if ceph_network_public_interface != ceph_network_private_interface else [] }}"
 
     # TODO: this bit is naive and doesn't do what is needed, but is
     # decent scaffolding.  Really need to be able to get the IP address
@@ -78,8 +78,14 @@
     #   failed_when: ping_result.rc > 0
     #   register: ping_result
     #   with_items:
-    #     - "{{ ansible_facts[ceph_private_interface]['ipv4'] }}"
-    #     - "{{ ansible_facts[ceph_private_interface]['ipv4'] if ceph_public_interface != ceph_private_interface else [] }}"
+    #     - "{{ ansible_facts[ceph_network_private_interface]['ipv4'] }}"
+    #     - "{{ ansible_facts[ceph_network_private_interface]['ipv4'] if ceph_network_public_interface != ceph_network_private_interface else [] }}"
+
+    - name: check if ceph_storage_devices is populated
+      fail:
+        msg: "No storage devices listed in ceph_storage_devices!"
+      changed_when: false
+      failed_when: ceph_storage_devices | length < 1
 
     - name: enumerate storage devices in ceph_storage_devices
       set_fact:
