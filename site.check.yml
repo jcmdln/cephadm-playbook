@@ -5,7 +5,7 @@
   any_errors_fatal: true
   gather_facts: false
   tags: always
-  hosts: all!kolla
+  hosts: all
 
   pre_tasks:
     - name: check if some version of Python is installed and accessible
@@ -13,14 +13,12 @@
         command -v python
       register: python_installed
       changed_when: false
-      failed_when: not python_installed
 
     - name: check if pip is installed and accessible
       raw: |-
         command -v pip
       register: pip_installed
       changed_when: false
-      failed_when: not pip_installed
 
     - name: Gather facts for later tasks
       setup:
@@ -43,7 +41,7 @@
   any_errors_fatal: true
   gather_facts: false
   tags: always
-  hosts: all!kolla
+  hosts: all
 
   tasks:
     - name: check if ceph_network_private_interface is defined
