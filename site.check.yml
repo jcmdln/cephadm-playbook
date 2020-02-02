@@ -1,11 +1,11 @@
 ---
-# check.yml
+# site.check.yml
 
 - name: check that hosts meet the basic requirements
   any_errors_fatal: true
   gather_facts: false
   tags: always
-  hosts: all
+  hosts: all!kolla
 
   pre_tasks:
     - name: check if some version of Python is installed and accessible
@@ -43,7 +43,7 @@
   any_errors_fatal: true
   gather_facts: false
   tags: always
-  hosts: all
+  hosts: all!kolla
 
   tasks:
     - name: check if ceph_network_private_interface is defined

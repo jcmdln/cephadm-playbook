@@ -1,5 +1,5 @@
 ---
-# deploy.yml
+# site.deploy.yml
 
 - name: Bootstrap the first ceph-mon host
   any_errors_fatal: true
