@@ -2,109 +2,57 @@
 # all.sample.yml
 
 #
-# Ceph
+# Config
 #
 
-# Whether the Ceph Dashboard should be deployed
-ceph_dashboard: true
+cephadm_conf: []
+cephadm_conf_commands: []
 
-# When deploying the Ceph Dashboard, use the following username and
-# password as the credentials.
-ceph_dashboard_username: "admin"
-ceph_dashboard_password: "admin"
-
-# Add or override settings that end up in '/etc/ceph.conf'.  Note that
-# Ceph does not read _all_ possible settings from this file, and will
-# result in divergence between CLI and Dashboard behavior if you
-# attempt to abuse it.
-ceph_conf:
-  - name: something
-    value: ""
-
-# Run custom Ceph commands.
 #
-# Note that the command prefix 'ceph' will be added to somewhat prevent
-# using this mechanism as an arbitrary vector for changes.
-ceph_config_cmds:
-  # TODO: Ensure pg_autoscaler module is loaded
-  # Ensure pg_autoscale is enabled globally
-  - osd set global osd_pool_default_pg_autoscale_mode on
-  # Create a custom 8:3 erasure coding profile
-  - osd erasure-code-profile set ec-8_3 k=8 m=3
+# Dashboard
+#
+
+cephadm_dashboard: true
+cephadm_dashboard_password: "admin"
+cephadm_dashboard_username: "admin"
+
+#
+# Firewall
+#
+
+cephadm_firewall_firewalld: true
 
 #
 # Network
 #
 
-ceph_network_private_interface: eno1
-ceph_network_private_ips: 192.168.1.0/24
-ceph_network_private_vip: ""
-
-ceph_network_public_interface: "{{ ceph_network_private_interface }}"
-ceph_network_public_ips: "{{ ceph_network_private_ips }}"
-ceph_network_public_vip: "{{ ceph_network_private_vip }}"
-
-# Whether to configure firewalld
-ceph_firewall_firewalld: true
+cephadm_network_private_interface: "eno1"
+cephadm_network_private_ips: []
+cephadm_network_private_vip: ""
+cephadm_network_public_interface: "{{ cephadm_network_private_interface }}"
+cephadm_network_public_ips: "{{ cephadm_network_private_ips }}"
+cephadm_network_public_vip: "{{ cephadm_network_private_vip }}"
 
 #
 # OSDs
 #
 
-# Allow an OSD to use up to 1 CPU (or thread) of the total available
-# number of CPUs.
-ceph_osd_max_cpu: "{{ (100 / ansible_processor_cores) / 100 }}"
+cephadm_osd_cpus: 1
 
-# Allow an OSD to reserve 1GB of memory for each TB of storage it would
-# be responsible for.
-ceph_osd_max_mem: "{{ 1gb per 1tb }}"
-
-# Hard-coded number of OSDs to create for each storage device based on
-# their CRUSH device type.
-ceph_osd_per_device:
-  hdd: 1
-  ssd: 2
-  nvme: 4
-
-# Below is how storage devices should be defined.  The way this works
-# is that each "pool" of storage devices should be associated with a
-# key, which can be anything, and the device allocations associated
-# per-pool.  Additionally, you may locally redefine variables
-# associated with each pool to trivialize complex setups.
-#
-# There are three types of storage devices you may define:
-#
-#   1. block      BlueStore block storage)
-#   2. db         Block.db / Rocks.db
-#   3. wal        Write-ahead-log (WAL)
-#
-# This structure is admittedly a bit awkward to simply describe, so
-# let's review a non-trivial example:
-#
-#   ceph_storage_devices:
-#     fast:
-#       vars: # example vars are the current detaults, for clarity
-#         osds_per_device: "{{ ceph_osd_per_device.hdd }}"
-#       block:
-#         - /dev/sdb
-#         - /dev/sdc
-#       db:
-#         - /dev/nvme1n1
-#       wal:
-#         - /dev/nvme2n1
-#
-#     faster:
-#       vars: # example vars are the current detaults, for clarity
-#         osds_per_device: "{{ ceph_osd_per_device.nvme }}"
-#       block:
-#         - /dev/nvme3n1
-#         - /dev/nvme4n1
-#
-# In the above we have two storage device pools: fast and faster.  To
-# better visualize how variables can be changed (as well as showing the
-# default values) I've additionally annotated them.  Hopefully this
-# makes things clear enough.
-ceph_storage_devices:
+cephadm_osd_devices:
   fast:
     block:
       - /dev/sdb
+
+cephadm_osd_memory: 1gb
+cephadm_osd_per_hdd: 1
+cephadm_osd_per_nvme: 4
+cephadm_osd_per_ssd: 2
+
+#
+# Python
+#
+
+cephadm_python_version: "{{ ansible_python_version }}"
+cephadm_python_major_version: "{{ ansible_python.version.major }}"
+cephadm_python_minor_version: "{{ ansible_python.version.minor }}"

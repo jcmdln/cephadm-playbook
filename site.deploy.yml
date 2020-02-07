@@ -1,69 +1,47 @@
 ---
 # site.deploy.yml
 
-- name: Bootstrap the first ceph-mon host
+- name: Deploy cephadm-ansible
   any_errors_fatal: true
+  gather_facts: false
   tags: always
-  hosts: mons[0]
+
+  hosts:
+    - all
 
   pre_tasks:
-    - name: Install package dependencies
-      package:
-        name: "{{ ceph_package_dependencies }}"
-        state: present
+    - name: check if some version of Python is installed
+      raw: |-
+        command -v python || command -v python2 || command -v python3
+      register: python_installed
+      changed_when: false
+
+    - name: Gather facts
+      setup:
+
+  tasks:
+    - name: check if host OS is supported
+      fail:
+        msg: "Reported host OS {{ target }} not supported"
+      changed_when: false
+      failed_when: target not in targets
       vars:
-        ceph_package_dependencies:
-          - docker.io
-          - python-pip
+        target: "{{ ansible_distribution }}-{{ ansible_distribution_version }}"
+        targets:
+          - Ubuntu-18.04
 
-    - name: Start package services
-      service:
-        name: "{{ item }}"
-        state: started
-      with_items:
-        - docker
+  roles:
+    - role: cephadm-facts
+      tags: [always]
 
-    - name: Install pip dependencies
-      pip:
-        name: "{{ ceph_pip_dependencies }}"
-        state: present
-      vars:
-        ceph_pip_dependencies:
-          - cephadm>=1.0.0,<2.0.0
-          - docker>=4.1.0,<5.0.0
+    - role: cephadm-check
+      tags: [check]
 
-  # tasks:
-  #   # TODO: allow using a defined interface _OR_ a specific IP address
-  #   - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
-  #     command: |-
-  #       cephadm bootstrap
-  #       --skip-ping-check
-  #       {{ "--skip-dashboard" if not ceph_dashboard else omit }}
-  #       {{ if ceph_dashboard --initial-dashboard-user ceph_dashboard_username --initial-dashboard-password ceph_dashboard_password }}
-  #       --mon-ip {{ ansible_facts[ceph_network_private_interface]['ipv4'][0]['address'] }}
+    - role: cephadm-bootstrap
+      tags: [bootstrap]
 
-#     # TODO: Do we really need to prep the container now?
-#     - name: Mount Ceph utilities container and expose to host
-#       command: |-
-#         cephadm shell
-#         --config ceph.conf
-#         --keyring ceph.client.admin.keyring
+    # - role: cephadm-mon
+    #   tags: [mon]
 
-#     # TODO: hosts wouldn't be authed with each other, so this wouldn't
-#     # actually work.
-#     - name: Sync Ceph keys
-#       synchronize:
-#         src: /fake/path
-#         dest: "rsync://{{ item }}/wew/lad"
-#       with_inventory_hostnames:
-#         - all!mons[0]
-
-# - name: Deploy additional monitors
-#   any_errors_fatal: true
-#   tags: always
-#   hosts: mons[0]
-
-# - name: Create OSDs
-#   any_errors_fatal: true
-#   tags: always
-#   hosts: mons[0]
+    # - role: cephadm-osd
+    #   tags: [osd]

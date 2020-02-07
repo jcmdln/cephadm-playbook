@@ -8,8 +8,7 @@ singlenode:
 # These are hosts we should copy Ceph client authentication keys to in
 # order for them to use the Ceph deployment.  The intended use-case is
 # that any host referenced in a kolla-ansible deployment should be
-# listed here.  If you are performing a standalone Ceph deployment
-# then comment out this section.
+# listed here.
 kolla:
   children:
     singlenode:
