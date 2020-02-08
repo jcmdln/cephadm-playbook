@@ -1,0 +1,36 @@
+---
+# inventory.sample.yml
+
+# These hosts will have ceph-mgr deployed to them.  In general the
+# Ceph recommendation is to co-mingle ceph-mgr and ceph-mon, but you
+# may deploy ceph-mgr to additional hosts if desired.
+mgrs:
+  children:
+    mons:
+
+# These hosts will have ceph-mon deployed to them.  Esnure that you
+# always maintain quorum by using and odd number of ceph-mon such as
+# 1, 3, or 5, though there are diminishing returns for using more than
+# 5 mons.  Outside of an exascale deployment, define no more than 5
+# ceph-mon unless you know what you're doing.
+mons:
+  hosts:
+    node-1.aswl.org:
+    node-2.aswl.org:
+    node-3.aswl.org:
+
+# These hosts with have RADOS Gateways (RGW) deployed to them.  Much
+# like how we handled ceph-mgr, we should co-mingle with ceph-mon to
+# both maintain quorum as well as load balance between the various
+# endpoints.
+rgws:
+  children:
+    mons:
+
+# These hosts will run ha-proxy in front of our rgw's.  A single RGW
+# is able to handle a fair number of requests, but at scale we're
+# better off using ha-proxy to split work up between multiple rgw's.
+rgwlbs:
+  hosts:
+    domain.tld:
+    domain.tld:

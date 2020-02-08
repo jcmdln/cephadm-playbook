@@ -1,13 +1,11 @@
 ---
 # site.deploy.yml
 
-- name: Deploy cephadm-ansible
+- name: Prerequisites
   any_errors_fatal: true
   gather_facts: false
+  hosts: all
   tags: always
-
-  hosts:
-    - all
 
   pre_tasks:
     - name: check if some version of Python is installed
@@ -37,11 +35,29 @@
     - role: cephadm-check
       tags: [check]
 
-    - role: cephadm-bootstrap
-      tags: [bootstrap]
+# - name: Bootstrap
+#   any_errors_fatal: true
+#   gather_facts: false
+#   hosts: mons[0]
+#   tags: bootstrap
 
-    # - role: cephadm-mon
-    #   tags: [mon]
+#   roles:
+#     - role: cephadm-bootstrap
 
-    # - role: cephadm-osd
-    #   tags: [osd]
+# - name: Add monitors
+#   any_errors_fatal: true
+#   gather_facts: false
+#   hosts: mons!mons[0]
+#   tags: mons
+
+#   roles:
+#     - role: cephadm-mon
+
+# - name: Setup OSDs
+#   any_errors_fatal: true
+#   gather_facts: false
+#   hosts: osds
+#   tags: osds
+
+#   roles:
+#     - role: cephadm-osd
