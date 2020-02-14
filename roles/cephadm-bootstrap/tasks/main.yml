@@ -1,0 +1,46 @@
+---
+# tasks file for cephadm-bootstrap
+
+- name: Install packages
+  package:
+    name: "{{ cephadm_packages }}"
+    state: present
+  vars:
+    cephadm_packages:
+      - docker.io
+      - python{{ cephadm_python_major_version }}-pip
+      - virtualenv
+
+- name: Start package services
+  service:
+    name: "{{ item }}"
+    state: started
+  with_items:
+    - docker
+
+- name: Create virtualenv with pip dependencies
+  pip:
+    name: "{{ cephadm_python_dependencies }}"
+    virtualenv: /opt/venv/cephadm
+    state: present
+  vars:
+    cephadm_python_dependencies:
+      - test-cephadm
+      - docker
+
+# TODO: allow using a defined interface _OR_ a specific IP address
+- name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
+  command: |-
+    cephadm bootstrap
+    {{ "--skip-dashboard" if cephadm_dashboard is defined and not cephadm_dashboard else omit }}
+    {{ "--skip-firewalld" if cephadm_firewall_firewalld is defined and not cephadm_firewall_firewalld else omit }}
+    --initial-dashboard-user cephadm_dashboard_username
+    --initial-dashboard-password cephadm_dashboard_password
+    --mon-ip {{ ansible_facts[cephadm_network_private_interface]['ipv4'][0]['address'] }}
+
+# TODO: Do we really need to prep the container now?
+# - name: Mount Ceph utilities container and expose to host
+#   command: |-
+#     cephadm shell
+#     --config ceph.conf
+#     --keyring ceph.client.admin.keyring
