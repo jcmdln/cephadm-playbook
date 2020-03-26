@@ -9,93 +9,45 @@
 # variable has been silently changed here, it is considered a severe
 # issue that _must_ be resolved.
 
-- name: Build dict of variables, types, and default values
-  set_fact:
-    variables:
-      - var: cephadm_conf
-        type: iterable
-        default:
-      - var: cephadm_conf_commands
-        type: iterable
-        default:
-      - var: cephadm_dashboard
-        type: boolean
-        default:
-      - var: cephadm_dashboard_password
-        type: string
-        default:
-      - var: cephadm_dashboard_username
-        type: string
-        default:
-      - var: cephadm_firewall_firewalld
-        type: boolean
-        default:
-      - var: cephadm_network_private_interface
-        type: string
-        default:
-      - var: cephadm_network_private_ips
-        type: iterable
-        default:
-      - var: cephadm_network_private_vip
-        type: string
-        default:
-      - var: cephadm_network_public_interface
-        type: string
-        default:
-      - var: cephadm_network_public_ips
-        type: iterable
-        default:
-      - var: cephadm_network_public_vip
-        type: string
-        default:
-      - var: cephadm_osd_cpus
-        type: number
-        default: 1
-      - var: cephadm_osd_devices
-        type: iterable
-        default: []
-      - var: cephadm_osd_memory
-        type: string
-        default: 1gb
-      - var: cephadm_osd_per_hdd
-        type: number
-        default: 1
-      - var: cephadm_osd_per_nvme
-        type: number
-        default: 4
-      - var: cephadm_osd_per_ssd
-        type: number
-        default: 2
-      - var: cephadm_python_version
-        type: number
-        default: ansible_python_version
-      - var: cephadm_python_major_version
-        type: number
-        default: ansible_python.version.major
-      - var: cephadm_python_minor_version
-        type: number
-        default: ansible_python.version.minor
-
 - name: Set cephadm facts
   set_fact:
-    "{{ var }}": >-
-      {{ var
-      if var is defined
-      else item.default }}
-  vars:
-    var: "{{ item.var }}"
-    default: "{{ item.default }}"
-  with_items: "{{ variables }}"
+    cephadm_conf: >-
+      {{ cephadm_conf | default([]) }}
+    cephadm_conf_commands: >-
+      {{ cephadm_conf_commands | default([]) }}
 
-- name: fail if variables have improper types
-  fail:
-    msg: >-
-      The variable '{{ var }}' is invalid.  Please ensure it is
-      defined and is of type '{{ type }}'.
-  failed_when: >-
-    {{ var is undefined
-    or (var is type) == 'False' }}
-  vars:
-    var: "{{ item.var }}"
-    type: "{{ item.type }}"
-  with_items: "{{ variables }}"
+    cephadm_dashboard: >-
+      {{ cephadm_dashboard | default(true) }}
+    cephadm_dashboard_password: >-
+      {{ cephadm_dashboard_password | default('admin') }}
+    cephadm_dashboard_username: >-
+      {{ cephadm_dashboard_username | default('admin') }}
+
+    cephadm_firewall_firewalld: >-
+      {{ cephadm_firewall_firewalld | default(true) }}
+
+    cephadm_network_private_interface: >-
+      {{ cephadm_network_private_interface | default('') }}
+    cephadm_network_private_ips: >-
+      {{ cephadm_network_private_ips | default([]) }}
+    cephadm_network_private_vip: >-
+      {{ cephadm_network_private_vip | default('') }}
+    cephadm_network_public_interface: >-
+      {{ cephadm_network_public_interface | default('') }}
+    cephadm_network_public_ips: >-
+      {{ cephadm_network_public_ips | default([]) }}
+    cephadm_network_public_vip: >-
+      {{ cephadm_network_public_vip | default('') }}
+
+    cephadm_osd_cpus: >-
+      {{ cephadm_osd_cpus | default(1) }}
+    cephadm_osd_devices: >-
+      {{ cephadm_osd_devices | default([]) }}
+    cephadm_osd_memory: >-
+      {{ cephadm_osd_memory | default('1gb') }}
+    cephadm_osd_per_hdd: >-
+      {{ cephadm_osd_per_hdd | default(1) }}
+    cephadm_osd_per_nvme: >-
+      {{ cephadm_osd_per_nvme | default(4) }}
+    cephadm_osd_per_ssd: >-
+      {{ cephadm_osd_per_ssd | default(2) }}
