@@ -68,13 +68,25 @@
         default: 2
       - var: cephadm_python_version
         type: number
-        default: "{{ ansible_python_version }}"
+        default: ansible_python_version
       - var: cephadm_python_major_version
         type: number
-        default: "{{ ansible_python.version.major }}"
+        default: ansible_python.version.major
       - var: cephadm_python_minor_version
         type: number
-        default: "{{ ansible_python.version.minor }}"
+        default: ansible_python.version.minor
+
+- name: Set cephadm facts
+  set_fact:
+    "{{ var }}": >-
+      {{ var
+      if var is defined
+      else default }}
+  vars:
+    var: "{{ item.var }}"
+    type: "{{ item.type }}"
+    default: "{{ item.default }}"
+  with_items: "{{ variables }}"
 
 - name: fail if variables have improper types
   fail:
@@ -87,112 +99,4 @@
   vars:
     var: "{{ item.var }}"
     type: "{{ item.type }}"
-    default: "{{ item.type }}"
   with_items: "{{ variables }}"
-
-- name: Set cephadm facts
-  set_fact:
-    cephadm_conf: >-
-      {{ cephadm_conf
-      if cephadm_conf is defined
-      else [] }}
-
-    cephadm_conf_commands: >-
-      {{ cephadm_conf_commands
-      if cephadm_conf_commands is defined
-      else [] }}
-
-    cephadm_dashboard: >-
-      {{ cephadm_dashboard
-      if cephadm_dashboard is defined
-      else true }}
-
-    cephadm_dashboard_password: >-
-      {{ cephadm_dashboard_password
-      if cephadm_dashboard_password is defined
-      else 'admin' }}
-
-    cephadm_dashboard_username: >-
-      {{ cephadm_dashboard_username
-      if cephadm_dashboard_username is defined
-      else 'admin' }}
-
-    cephadm_firewall_firewalld: >-
-      {{ cephadm_firewall_firewalld
-      if cephadm_firewall_firewalld is defined
-      else true }}
-
-    cephadm_network_private_interface: >-
-      {{ cephadm_network_private_interface
-      if cephadm_network_private_interface is defined
-      else '' }}
-
-    cephadm_network_private_ips: >-
-      {{ cephadm_network_private_ips
-      if cephadm_network_private_ips is defined
-      else [] }}
-
-    cephadm_network_private_vip: >-
-      {{ cephadm_network_private_vip
-      if cephadm_network_private_vip is defined
-      else "" }}
-
-    cephadm_network_public_interface: >-
-      {{ cephadm_network_public_interface
-      if cephadm_network_public_interface is defined
-      else "" }}
-
-    cephadm_network_public_ips: >-
-      {{ cephadm_network_public_ips
-      if cephadm_network_public_ips is defined
-      else [] }}
-
-    cephadm_network_public_vip: >-
-      {{ cephadm_network_public_vip
-      if cephadm_network_public_vip is defined
-      else '' }}
-
-    cephadm_osd_cpus: >-
-      {{ cephadm_osd_cpus
-      if cephadm_osd_cpus is defined
-      else 1 }}
-
-    cephadm_osd_devices: >-
-      {{ cephadm_osd_devices
-      if cephadm_osd_devices is defined
-      else [] }}
-
-    cephadm_osd_memory: >-
-      {{ cephadm_osd_memory
-      if cephadm_osd_memory is defined
-      else '1gb' }}
-
-    cephadm_osd_per_hdd: >-
-      {{ cephadm_osd_per_hdd
-      if cephadm_osd_per_hdd is defined
-      else 1 }}
-
-    cephadm_osd_per_nvme: >-
-      {{ cephadm_osd_per_nvme
-      if cephadm_osd_per_nvme is defined
-      else 4 }}
-
-    cephadm_osd_per_ssd: >-
-      {{ cephadm_osd_per_ssd
-      if cephadm_osd_per_ssd is defined
-      else 2 }}
-
-    cephadm_python_version: >-
-      {{ cephadm_python_version
-      if cephadm_python_version is defined
-      else ansible_python_version }}
-
-    cephadm_python_major_version: >-
-      {{ cephadm_python_version.split('.')[0]
-      if cephadm_python_version is defined
-      else ansible_python.version.major }}
-
-    cephadm_python_minor_version: >-
-      {{ cephadm_python_version.split('.')[1]
-      if cephadm_python_version is defined
-      else ansible_python.version.minor }}

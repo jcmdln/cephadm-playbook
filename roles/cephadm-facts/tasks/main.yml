@@ -4,8 +4,5 @@
 - name: set global facts
   include: facts.yml
 
-- name: fail if any facts have invalid types
-  include: types.yml
-
 - name: fail if any facts are invalid
-  include: facts.yml
+  include: fail.yml
