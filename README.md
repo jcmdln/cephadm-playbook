@@ -26,30 +26,37 @@ Platform Support
 ==============================
 | Operating System   | Quality |
 | ------------------ | ------- |
-| Alpine Linux 3.11+ | None, planned
-| CentOS 8.x+        | None, planned
-| Ubuntu 20.04LTS+   | None, planned
+| CentOS 8.x         | None, planned
+| Ubuntu 18.04 LTS   | None, planned
 
 Usage
 ===================
 
+Setup
+-------------------
+```sh
+$ virtualenv -p python3 venv
+$ . venv/bin/activate
+(venv) $ pip install -r requirements.txt
+(venv) $ curl -L -o venv/bin/cephadm \
+    https://raw.githubusercontent.com/jcmdln/ceph/octopus/src/cephadm/cephadm
+(venv) $ chmod +x venv/bin/cephadm
+```
+
 Quick Start
 -------------------
 
-1. Check for any potential issues
-```sh
-$ ansible-playbook site.check.yml
-```
+1. Deploy this playbook
 
-2. Deploy this playbook
-```sh
-$ ansible-playbook site.deploy.yml
-```
+  ```sh
+  $ ansible-playbook site.deploy.yml
+  ```
 
 5. Purge the deployment and its configuration
-```sh
-$ ansible-playbook site.purge.yml
-```
+
+  ```sh
+  $ ansible-playbook site.purge.yml
+  ```
 
 Methodology
 ==============================

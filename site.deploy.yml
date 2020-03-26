@@ -1,41 +1,24 @@
 ---
 # site.deploy.yml
 
-- name: Prerequisites
+- name: check if hosts are eligible
   any_errors_fatal: true
   gather_facts: false
   hosts: all
   tags: always
 
-  pre_tasks:
-    - name: check if some version of Python is installed
-      raw: |-
-        command -v python || command -v python2 || command -v python3
-      register: python_installed
-      changed_when: false
+  roles:
+    - role: cephadm-check
 
-    - name: Gather facts
-      setup:
-
-  tasks:
-    - name: check if host OS is supported
-      fail:
-        msg: "Reported host OS {{ target }} not supported"
-      changed_when: false
-      failed_when: target not in targets
-      vars:
-        target: "{{ ansible_distribution }}-{{ ansible_distribution_version }}"
-        targets:
-          - Ubuntu-18.04
+- name: check configuration for issues
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: all
+  tags: always
 
   roles:
     - role: cephadm-facts
-      tags: [always]
-
-    - role: cephadm-check
-      tags: [check]
-
-# - name: Bootstrap
+# - name: Bootstrap the first host
 #   any_errors_fatal: true
 #   gather_facts: false
 #   hosts: mons[0]

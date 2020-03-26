@@ -15,9 +15,8 @@ mgrs:
 # ceph-mon unless you know what you're doing.
 mons:
   hosts:
-    node-1.aswl.org:
-    node-2.aswl.org:
-    node-3.aswl.org:
+    localhost:
+      ansible_connection: local
 
 # These hosts with have RADOS Gateways (RGW) deployed to them.  Much
 # like how we handled ceph-mgr, we should co-mingle with ceph-mon to
@@ -31,6 +30,5 @@ rgws:
 # is able to handle a fair number of requests, but at scale we're
 # better off using ha-proxy to split work up between multiple rgw's.
 rgwlbs:
-  hosts:
-    domain.tld:
-    domain.tld:
+  children:
+    mons:

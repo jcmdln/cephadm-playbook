@@ -1,58 +1,107 @@
 ---
 # all.sample.yml
+#
+# This file documents and lists _all_ variables defined in this
+# playbook along with their default values.  If any information for a
+# a variable in this file is unclear, this is considered to be a
+# documentation bug that _must_ be corrected.
 
 #
 # Config
 #
 
+# Valid Type(s): iterable
 cephadm_conf: []
+
+# Valid Type(s): iterable
 cephadm_conf_commands: []
 
 #
 # Dashboard
 #
 
+# 'cephadm_dashboard' receives a boolean which determines whether the
+# Ceph Dashboard should be deployed.  A "truthy" value indicates that
+# the dashboard will be deployed.
 cephadm_dashboard: true
+
+# 'cephadm_dashboard_password' receives a string indicating the
+# password to set and use when logging into the Ceph dashboard.
+#
+# If 'cephadm_dashboard: true' and this variable is not set, it will
+# cause a failure.
 cephadm_dashboard_password: "admin"
+
+# 'cephadm_dashboard_username' receives a string indicating the
+# username to set and use when logging into the Ceph dashboard.
+#
+# If 'cephadm_dashboard: true' and this variable is not set, it will
+# cause a failure.
 cephadm_dashboard_username: "admin"
 
 #
 # Firewall
 #
 
+# Valid Type(s): boolean
 cephadm_firewall_firewalld: true
 
 #
 # Network
 #
 
+# Valid Type(s): string
 cephadm_network_private_interface: "eno1"
+
+# Valid Type(s): iterable
 cephadm_network_private_ips: []
+
+# Valid Type(s): string
 cephadm_network_private_vip: ""
-cephadm_network_public_interface: "{{ cephadm_network_private_interface }}"
-cephadm_network_public_ips: "{{ cephadm_network_private_ips }}"
-cephadm_network_public_vip: "{{ cephadm_network_private_vip }}"
+
+# Valid Type(s): string
+cephadm_network_public_interface: ""
+
+# Valid Type(s): iterable
+cephadm_network_public_ips: []
+
+# Valid Type(s): string
+cephadm_network_public_vip: ""
 
 #
 # OSDs
 #
 
+# Valid Type(s): number
 cephadm_osd_cpus: 1
 
+# Valid Type(s): iterable
 cephadm_osd_devices:
   fast:
     block:
       - /dev/sdb
 
+# Valid Type(s): string
 cephadm_osd_memory: 1gb
+
+# Valid Type(s): number
 cephadm_osd_per_hdd: 1
+
+# Valid Type(s): number
 cephadm_osd_per_nvme: 4
+
+# Valid Type(s): number
 cephadm_osd_per_ssd: 2
 
 #
 # Python
 #
 
+# Valid Type(s): number, string
 cephadm_python_version: "{{ ansible_python_version }}"
+
+# Valid Type(s): number, string
 cephadm_python_major_version: "{{ ansible_python.version.major }}"
+
+# Valid Type(s): number, string
 cephadm_python_minor_version: "{{ ansible_python.version.minor }}"

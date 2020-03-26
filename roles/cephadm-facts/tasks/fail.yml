@@ -1,0 +1,75 @@
+---
+- name: check if cephadm_network_private_interface is defined
+  fail:
+    msg: >-
+      The variable 'cephadm_network_private_interface' is invalid!
+  failed_when:
+    - cephadm_network_private_interface is undefined
+
+- name: check if defined network interfaces exist
+  fail:
+    msg: "The interface {{ item }} does not exist"
+  changed_when: false
+  failed_when: interface not in interfaces
+  vars:
+    interface: "{{ item }}"
+    interfaces: "{{ ansible_facts['interfaces'] }}"
+  with_items:
+    - "{{ cephadm_network_private_interface }}"
+    - "{{ cephadm_network_public_interface }}"
+
+# TODO: this bit is naive and doesn't do what is needed, but is
+# decent scaffolding.  Really need to be able to get the IP address
+# of the defined interface on all hosts to confirm the following:
+#  * all interfaces have different IPs
+#  * interfaces across hosts are able to reach each other
+#  * probably some other conditions I'm failing to think of.
+##
+# - name: check if hosts are able to reach each other
+#   command: |-
+#     ping -c 1 {{ item['address'] }}
+#   changed_when: false
+#   failed_when: ping_result.rc > 0
+#   register: ping_result
+#   with_items:
+#     - "{{ ansible_facts[cephadm_network_private_interface]['ipv4'] }}"
+#     - "{{ ansible_facts[cephadm_network_private_interface]['ipv4'] if cephadm_network_public_interface != cephadm_network_private_interface else [] }}"
+
+- name: check if cephadm_osd_devices is populated
+  fail:
+    msg: "No storage devices listed in cephadm_osd_devices!"
+  changed_when: false
+  failed_when: cephadm_osd_devices | length < 1
+
+- name: enumerate storage devices from cephadm_osd_devices
+  set_fact:
+    cephadm_osd_devices_defined: "{{ defined_devices|unique }}"
+  failed_when:
+    - cephadm_osd_devices is undefined
+    - cephadm_osd_devices | length < 1
+  vars:
+    devices: "{{ cephadm_osd_devices[item.key] }}"
+    defined_devices:
+      - "{{ devices['block'] }}"
+      - "{{ devices['db']  if devices['db']  is defined else [] }}"
+      - "{{ devices['wal'] if devices['wal'] is defined else [] }}"
+  with_items: "{{ cephadm_osd_devices | dict2items }}"
+
+# TODO: This might break depending on how Ansible enumerates
+# storage devices across Linux distributions.  Doesn't appear that
+# RAID/HBA controllers impede us from collecting accurate
+# information, but need to _confirm_ that.
+- name: enumerate storage devices from ansible_facts['devices']
+  set_fact:
+    cephadm_osd_devices_found: "{{ found_devices }}"
+  vars:
+    found_devices: "{{ ansible_facts['devices'].keys() | list }}"
+
+- name: check if defined storage devices are present
+  fail:
+    msg: "The defined device {{ device }} was not found!"
+  changed_when: false
+  failed_when: device not in cephadm_osd_devices_found
+  vars:
+    device: "{{ item.split(':')[0].split('/dev/')[1] }}"
+  with_items: "{{ cephadm_osd_devices_defined }}"
