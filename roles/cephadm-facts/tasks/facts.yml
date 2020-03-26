@@ -81,10 +81,9 @@
     "{{ var }}": >-
       {{ var
       if var is defined
-      else default }}
+      else item.default }}
   vars:
     var: "{{ item.var }}"
-    type: "{{ item.type }}"
     default: "{{ item.default }}"
   with_items: "{{ variables }}"
 
@@ -94,8 +93,8 @@
       The variable '{{ var }}' is invalid.  Please ensure it is
       defined and is of type '{{ type }}'.
   failed_when: >-
-    {{ var }} is undefined
-    or {{ var }} is not {{ type }}
+    {{ var is undefined
+    or (var is type) == 'False' }}
   vars:
     var: "{{ item.var }}"
     type: "{{ item.type }}"
