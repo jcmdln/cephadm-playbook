@@ -1,6 +1,27 @@
 ---
 # tasks file for cephadm-bootstrap
 
+- name: Download cephadm
+  get_url:
+    url: https://raw.githubusercontent.com/jcmdln/ceph/octopus/src/cephadm/cephadm
+    dest: /cephadm
+    mode: u+x
+  register: cephadm_installed
+
+- name: Set cephadm release
+  command: >-
+    /cephadm add-repo --release octopus
+  when:
+    - cephadm_installed.changed
+    - false
+
+- name: Install cephadm
+  command: >-
+    /cephadm install
+  when:
+    - cephadm_installed.changed
+    - false
+
 - name: Install packages
   package:
     name: "{{ cephadm_packages }}"
@@ -8,8 +29,8 @@
   vars:
     cephadm_packages:
       - docker.io
-      - python{{ cephadm_python_major_version }}-pip
-      - virtualenv
+      - python3-pip
+      - python3-virtualenv
 
 - name: Start package services
   service:
@@ -18,25 +39,31 @@
   with_items:
     - docker
 
-- name: Create virtualenv with pip dependencies
-  pip:
-    name: "{{ cephadm_python_dependencies }}"
-    virtualenv: /opt/venv/cephadm
-    state: present
-  vars:
-    cephadm_python_dependencies:
-      - test-cephadm
-      - docker
+- name: Create /etc/ceph directory
+  file:
+    path: /etc/ceph
+    state: directory
 
 # TODO: allow using a defined interface _OR_ a specific IP address
 - name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
-  command: |-
-    cephadm bootstrap
-    {{ "--skip-dashboard" if cephadm_dashboard is defined and not cephadm_dashboard else omit }}
-    {{ "--skip-firewalld" if cephadm_firewall_firewalld is defined and not cephadm_firewall_firewalld else omit }}
-    --initial-dashboard-user cephadm_dashboard_username
-    --initial-dashboard-password cephadm_dashboard_password
-    --mon-ip {{ ansible_facts[cephadm_network_private_interface]['ipv4'][0]['address'] }}
+  command: >-
+    /cephadm bootstrap
+    --allow-fqdn-hostname
+    {{ "--skip-dashboard"
+    if cephadm_dashboard is defined
+    and not cephadm_dashboard }}
+    {{ "--skip-firewalld"
+    if cephadm_firewall_firewalld is defined
+    and not cephadm_firewall_firewalld }}
+    {{ "--initial-dashboard-user"
+    if cephadm_dashboard_username is defined }}
+    {{ cephadm_dashboard_username if
+    cephadm_dashboard_username is defined }}
+    {{ "--initial-dashboard-password"
+    if cephadm_dashboard_password is defined }}
+    {{ cephadm_dashboard_password if
+    cephadm_dashboard_password is defined }}
+    --mon-ip {{ ansible_facts.default_ipv4.address }}
 
 # TODO: Do we really need to prep the container now?
 # - name: Mount Ceph utilities container and expose to host

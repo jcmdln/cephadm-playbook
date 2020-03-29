@@ -20,10 +20,10 @@
   roles:
     - cephadm-check
 
-- name: Bootstrap the cluster
+- name: Bootstrap the first ceph-mon
   any_errors_fatal: true
   gather_facts: false
-  hosts: all
+  hosts: mons[0]
   tags: [bootstrap]
 
   roles:

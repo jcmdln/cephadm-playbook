@@ -6,7 +6,6 @@
 
 - name: Check types of defined variables for issues
   include: types.yml
-
-- name: Check values of defined variables for issues
-  include: values.yml
-  tags: [never]
+# - name: Check values of defined variables for issues
+#   include: values.yml
+#   tags: [never]
