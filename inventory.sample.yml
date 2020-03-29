@@ -15,8 +15,7 @@ mgrs:
 # ceph-mon unless you know what you're doing.
 mons:
   hosts:
-    localhost:
-      ansible_connection: local
+    thonk.club:
 
 # These hosts with have RADOS Gateways (RGW) deployed to them.  Much
 # like how we handled ceph-mgr, we should co-mingle with ceph-mon to

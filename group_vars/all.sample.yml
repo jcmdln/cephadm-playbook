@@ -1,6 +1,40 @@
 ---
-# Valid Type(s): iterable
-cephadm_osd_devices:
-  fast:
-    block:
-      - /dev/sdb
+# group_vars/all.sample.yml
+
+cephadm_conf: []
+cephadm_conf_commands: []
+
+cephadm_dashboard: true
+cephadm_dashboard_password: admin
+cephadm_dashboard_username: admin
+
+#
+# Firewall
+#
+cephadm_firewall_firewalld: true
+
+#
+# Network
+#
+
+cephadm_network_private_interface: ""
+cephadm_network_private_ips: []
+cephadm_network_private_vip: ""
+
+cephadm_network_public_interface: ""
+cephadm_network_public_ips: []
+cephadm_network_public_vip: ""
+
+#
+# OSD
+#
+
+cephadm_osd_cpus: 1
+cephadm_osd_devices: {}
+
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#human-to-bytes
+cephadm_osd_memory: "1 GB"
+
+cephadm_osd_per_hdd: 1
+cephadm_osd_per_nvme: 4
+cephadm_osd_per_ssd: 2

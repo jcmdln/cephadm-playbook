@@ -1,16 +1,16 @@
 ---
 # site.deploy.yml
 
-- name: Prerequisites
+- name: Check hosts and configuration for issues
   any_errors_fatal: true
   gather_facts: false
   hosts: all
+  tags: [always, check]
 
   pre_tasks:
     - name: check if Python 3 is present
       raw: |-
         command -v python3
-      register: python_installed
       changed_when: false
 
     - name: gather facts
@@ -18,5 +18,13 @@
         gather_subset: all
 
   roles:
-    - role: cephadm-facts
-    - role: cephadm-check
+    - cephadm-check
+
+- name: Bootstrap the cluster
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: all
+  tags: [bootstrap]
+
+  roles:
+    - cephadm-bootstrap

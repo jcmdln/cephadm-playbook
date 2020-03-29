@@ -1,0 +1,169 @@
+---
+# cephadm-check/tasks/types.yml
+
+#
+# cephadm_conf
+#
+
+- name: check if var 'cephadm_conf' is type 'mapping'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_conf':
+      {{ cephadm_conf }}
+  failed_when: >-
+    cephadm_conf is not mapping
+
+- name: check if 'cephadm_conf_commands' is type 'iterable'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_conf_commands':
+      {{ cephadm_conf_commands }}
+  failed_when: >-
+    cephadm_conf_commands is not iterable
+    or cephadm_conf_commands is string
+
+#
+# cephadm_dashboard
+#
+
+- name: check if 'cephadm_dashboard' is type 'boolean'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_dashboard':
+      {{ cephadm_dashboard }}
+  failed_when: >-
+    cephadm_dashboard is not boolean
+
+- name: check if 'cephadm_dashboard_password' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_dashboard_password':
+      {{ cephadm_dashboard_password }}
+  failed_when: >-
+    cephadm_dashboard_password is not string
+
+- name: check if 'cephadm_dashboard_username' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_dashboard_username':
+      {{ cephadm_dashboard_username }}
+  failed_when: >-
+    cephadm_dashboard_username is not string
+
+#
+# cephadm_firewall
+#
+
+- name: check if 'cephadm_firewall_firewalld' is type 'boolean'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_firewall_firewalld':
+      {{ cephadm_firewall_firewalld }}
+  failed_when: >-
+    cephadm_firewall_firewalld is not boolean
+
+#
+# cephadm_network
+#
+
+- name: check if 'cephadm_network_private_interface' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_private_interface':
+      {{ cephadm_network_private_interface }}
+  failed_when: >-
+    cephadm_network_private_interface is not string
+
+- name: check if 'cephadm_network_private_ips' is type 'iterable'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_private_ips':
+      {{ cephadm_network_private_ips }}
+  failed_when: >-
+    cephadm_network_private_ips is not iterable
+    or cephadm_network_private_ips is string
+
+- name: check if 'cephadm_network_private_vip' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_private_vip':
+      {{ cephadm_network_private_vip }}
+  failed_when: >-
+    cephadm_network_private_vip is not string
+
+- name: check if 'cephadm_network_public_interface' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_public_interface':
+      {{ cephadm_network_public_interface }}
+  failed_when: >-
+    cephadm_network_public_interface is not string
+
+- name: check if 'cephadm_network_public_ips' is type 'iterable'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_public_ips':
+      {{ cephadm_network_public_ips }}
+  failed_when: >-
+    cephadm_network_public_ips is not iterable
+    or cephadm_network_public_ips is string
+
+- name: check if 'cephadm_network_public_vip' is type 'string'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_network_public_vip':
+      {{ cephadm_network_public_vip }}
+  failed_when: >-
+    cephadm_network_public_vip is not string
+
+#
+# cephadm_osd
+#
+
+- name: check if 'cephadm_osd_cpus' is type 'number'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_cpus':
+      {{ cephadm_osd_cpus }}
+  failed_when: >-
+    cephadm_osd_cpus | int < 1
+
+- name: check if 'cephadm_osd_devices' is type 'mapping'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_devices':
+      {{ cephadm_osd_devices }}
+  failed_when: >-
+    cephadm_osd_devices is not mapping
+
+- name: check if 'cephadm_osd_memory' is type 'number'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_memory':
+      {{ cephadm_osd_memory | filesizeformat(true) }}
+  failed_when: >-
+    cephadm_osd_memory | int < 1
+
+- name: check if 'cephadm_osd_per_hdd' is type 'number'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_per_hdd':
+      {{ cephadm_osd_per_hdd }}
+  failed_when: >-
+    cephadm_osd_per_hdd | int < 1
+
+- name: check if 'cephadm_osd_per_nvme' is type 'number'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_per_nvme':
+      {{ cephadm_osd_per_nvme }}
+  failed_when: >-
+    cephadm_osd_per_nvme | int < 1
+
+- name: check if 'cephadm_osd_per_ssd' is type 'number'
+  fail:
+    msg: >-
+      Invalid value for variable 'cephadm_osd_per_ssd':
+      {{ cephadm_osd_per_ssd }}
+  failed_when: >-
+    cephadm_osd_per_ssd | int < 1

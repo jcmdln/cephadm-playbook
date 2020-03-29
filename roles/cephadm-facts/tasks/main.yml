@@ -1,8 +1,0 @@
----
-# tasks file for cephadm-check
-
-- name: set global facts
-  include: facts.yml
-
-- name: fail if variables have improper types
-  include: types.yml

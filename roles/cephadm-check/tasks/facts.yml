@@ -1,18 +1,10 @@
 ---
-# facts.yml
-#
-# This file examines all defined variables and sets them as facts.  In
-# the event that an expected variable is undefined, we will set the
-# default value.
-#
-# No silent adjustments of variables should occur.  If you find that a
-# variable has been silently changed here, it is considered a severe
-# issue that _must_ be resolved.
+# cephadm-check/tasks/facts.yml
 
 - name: Set cephadm facts
   set_fact:
     cephadm_conf: >-
-      {{ cephadm_conf | default([]) }}
+      {{ cephadm_conf | default({}) }}
     cephadm_conf_commands: >-
       {{ cephadm_conf_commands | default([]) }}
 
@@ -42,9 +34,11 @@
     cephadm_osd_cpus: >-
       {{ cephadm_osd_cpus | default(1) }}
     cephadm_osd_devices: >-
-      {{ cephadm_osd_devices | default([]) }}
+      {{ cephadm_osd_devices | default({}) }}
     cephadm_osd_memory: >-
-      {{ cephadm_osd_memory | default('1gb') }}
+      {{ (cephadm_osd_memory | human_to_bytes)
+      if cephadm_osd_memory is defined
+      else ('1 GB' | human_to_bytes) }}
     cephadm_osd_per_hdd: >-
       {{ cephadm_osd_per_hdd | default(1) }}
     cephadm_osd_per_nvme: >-
