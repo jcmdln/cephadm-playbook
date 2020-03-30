@@ -1,2 +1,68 @@
 ---
 # site.purge.yml
+#
+# To purge a cluster, you must run the following:
+#
+#   ansible-playbook -i inventory.yml site.purge.yml \
+#     --tags yes-i-really-really-mean-it \
+#     --extra-vars "cephadm_cluster_fsid=<fsid>"
+#
+##
+
+- name: Purge Ceph from all defined hosts
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: all
+  tags: [never, yes-i-really-really-mean-it]
+
+  pre_tasks:
+    - name: check if /cephadm exists
+      stat:
+        path: /cephadm
+      register: cephadm_installed
+
+    - name: check if /etc/ceph/ceph.conf exists
+      stat:
+        path: /etc/ceph/ceph.conf
+      register: cephadm_deployed
+
+    - name: Fail if cephadm isn't installed and deployed
+      fail:
+        msg: >-
+          Nah
+      when:
+        - not cephadm_installed
+        - not cephadm_deployed
+
+  tasks:
+    - name: Destroy a cluster
+      command: >-
+        /cephadm shell -- ceph rm-cluster --force
+        {{ cephadm_cluster_fsid }}
+      failed_when: false
+
+    - name: Cleanup vgs
+      command: >-
+        vgremove -y ceph-*
+      failed_when: false
+
+    - name: Stop all running docker containers
+      command: >-
+        docker ps | grep -v grep | grep -i ceph | awk '{print $1}'
+        | xargs docker stop
+      failed_when: false
+
+    - name: Docker system prune
+      command: >-
+        docker system prune -af
+      failed_when: false
+
+    - name: Delete /etc/ceph
+      file:
+        path: /etc/ceph
+        state: absent
+
+    - name: Delete /cephadm
+      file:
+        path: /cephadm
+        state: absent
