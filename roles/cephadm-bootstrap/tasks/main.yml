@@ -49,25 +49,9 @@
   command: >-
     /cephadm bootstrap
     --allow-fqdn-hostname
-    {{ "--skip-dashboard"
-    if cephadm_dashboard is defined
-    and not cephadm_dashboard }}
-    {{ "--skip-firewalld"
-    if cephadm_firewall_firewalld is defined
-    and not cephadm_firewall_firewalld }}
-    {{ "--initial-dashboard-user"
-    if cephadm_dashboard_username is defined }}
-    {{ cephadm_dashboard_username if
-    cephadm_dashboard_username is defined }}
-    {{ "--initial-dashboard-password"
-    if cephadm_dashboard_password is defined }}
-    {{ cephadm_dashboard_password if
-    cephadm_dashboard_password is defined }}
-    --mon-ip {{ ansible_facts.default_ipv4.address }}
-
-# TODO: Do we really need to prep the container now?
-# - name: Mount Ceph utilities container and expose to host
-#   command: |-
-#     cephadm shell
-#     --config ceph.conf
-#     --keyring ceph.client.admin.keyring
+    --skip-dashboard
+    --skip-firewalld
+    --skip-mon-network
+    --skip-monitoring-stack
+    --skip-ssh
+    --mon-ip {{ ansible_facts[cephadm_network_public_interface].[cephadm_network_ip_version].address }}

@@ -1,30 +1,37 @@
 ---
-# site.deploy.yml
+# site-deploy.yml
 
-- name: Check hosts and configuration for issues
+- name: Check
   any_errors_fatal: true
   gather_facts: false
   hosts: all
-  tags: [always, check]
-
-  pre_tasks:
-    - name: check if Python 3 is present
-      raw: |-
-        command -v python3
-      changed_when: false
-
-    - name: gather facts
-      setup:
-        gather_subset: all
-
+  tags: [always]
   roles:
-    - cephadm-check
+    - role: cephadm-check
+      tags: [check]
+    - roles: cephadm-setup
+      tags: [setup]
 
-- name: Bootstrap the first ceph-mon
+- name: Bootstrap
   any_errors_fatal: true
   gather_facts: false
   hosts: mons[0]
   tags: [bootstrap]
-
   roles:
     - cephadm-bootstrap
+
+- name: Add ceph-mon(s)
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: mons[0]
+  tags: [mons]
+  roles:
+    - cephadm-mon
+
+- name: Add ceph-osd(s)
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: osds
+  tags: [osds]
+  roles:
+    - cephadm-osd

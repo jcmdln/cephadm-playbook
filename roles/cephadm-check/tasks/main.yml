@@ -1,11 +1,20 @@
 ---
 # cephadm-check/tasks/main.yml
 
+- name: Check if Python 3 is present
+  raw: |-
+    command -v python3
+  changed_when: false
+
+- name: Gather facts
+  setup:
+    gather_subset: all
+
 - name: Set defined variables as facts
   include: facts.yml
 
 - name: Check types of defined variables for issues
   include: types.yml
-# - name: Check values of defined variables for issues
-#   include: values.yml
-#   tags: [never]
+
+- name: Check values of defined variables for issues
+  include: values.yml

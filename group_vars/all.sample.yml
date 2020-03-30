@@ -1,29 +1,59 @@
 ---
-# group_vars/all.sample.yml
-
-cephadm_conf: []
-cephadm_conf_commands: []
+#
+# Dashboard
+#
 
 cephadm_dashboard: true
+
 cephadm_dashboard_password: admin
 cephadm_dashboard_username: admin
+
+cephadm_dashboard_server_addr: >-
+  "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+cephadm_dashboard_server_port: 8080
+cephadm_dashboard_server_port_ssl: 8443
+
+cephadm_dashboard_ssl_crt: ""
+cephadm_dashboard_ssl_key: ""
 
 #
 # Firewall
 #
+
 cephadm_firewall_firewalld: true
+
+#
+# Health
+#
+
+cephadm_health_mon_check: ""
+
+#
+# Mgr
+#
+
+cephadm_mgr_conf: {}
+cephadm_mgr_conf_commands: []
+
+#
+# Mon
+#
+
+cephadm_mon: ""
 
 #
 # Network
 #
 
-cephadm_network_private_interface: ""
-cephadm_network_private_ips: []
-cephadm_network_private_vip: ""
+cephadm_network_ip_version: ipv4
 
-cephadm_network_public_interface: ""
-cephadm_network_public_ips: []
-cephadm_network_public_vip: ""
+cephadm_network_interface_cluster: eno1
+cephadm_network_interface_public: "{{ cephadm_network_interface_cluster }}"
+cephadm_network_interface_monitor: "{{ cephadm_network_interface_public }}"
+cephadm_network_interface_radosgw: "{{ cephadm_network_interface_public }}"
+
+cephadm_network_vip_cluster: ""
+cephadm_network_vip_public: ""
 
 #
 # OSD
@@ -33,8 +63,4 @@ cephadm_osd_cpus: 1
 cephadm_osd_devices: {}
 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#human-to-bytes
-cephadm_osd_memory: "1 GB"
-
-cephadm_osd_per_hdd: 1
-cephadm_osd_per_nvme: 4
-cephadm_osd_per_ssd: 2
+cephadm_osd_memory: "4 GB"

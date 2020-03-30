@@ -1,0 +1,51 @@
+---
+- name: Enable dashboard
+  command: >-
+    ceph mgr module enable dashboard
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Create self-signed certificate
+  command: >-
+    ceph dashboard create-self-signed-cert
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Set dashboard address
+  command: >-
+    ceph config set mgr mgr/dashboard/server_addr {{ cephadm_dashboard_server_addr }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Set dashboard port
+  command: >-
+    ceph config set mgr mgr/dashboard/server_port {{ cephadm_dashboard_server_port }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Set dashboard secure port
+  command: >-
+    ceph config set mgr mgr/dashboard/ssl_server_port {{ cephadm_dashboard_ssl_server_port }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Create dashboard account
+  command: >-
+    ceph dashboard ac-user-create
+    {{ cephadm_dashboard_username }}
+    {{ cephadm_dashboard_password }}
+    administrator
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
