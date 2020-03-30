@@ -8,6 +8,7 @@
 
 # Files
 !.gitignore
+!Dockerfile
 !*.sample.yml
 !site.*.yml
 
