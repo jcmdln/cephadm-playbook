@@ -9,6 +9,7 @@
 # Files
 !.gitignore
 !Dockerfile
+!requirements*.txt
 !*.sample.yml
 !site.*.yml
 
