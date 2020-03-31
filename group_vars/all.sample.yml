@@ -1,4 +1,9 @@
----
+# all.sample.yml
+#
+# vars are in groups, both in alpha-numerical order.
+#
+##
+
 #
 # Dashboard
 #
@@ -27,6 +32,18 @@ cephadm_firewall_firewalld: true
 #
 
 cephadm_health_mon_check: ""
+
+#
+# Host
+#
+
+cephadm_host_packages:
+  - docker.io
+  - python3-pip
+  - python3-virtualenv
+
+cephadm_host_services:
+  - docker
 
 #
 # Mgr
