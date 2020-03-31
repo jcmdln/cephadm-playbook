@@ -1,51 +1,15 @@
----
 # tasks file for cephadm-bootstrap
 
-- name: Download cephadm
-  get_url:
-    url: https://raw.githubusercontent.com/jcmdln/ceph/octopus/src/cephadm/cephadm
-    dest: /cephadm
-    mode: u+x
-  register: cephadm_installed
-
-- name: Set cephadm release
-  command: >-
-    /cephadm add-repo --release octopus
-  when:
-    - cephadm_installed.changed
-    - false
-
-- name: Install cephadm
-  command: >-
-    /cephadm install
-  when:
-    - cephadm_installed.changed
-    - false
-
-- name: Install packages
-  package:
-    name: "{{ cephadm_packages }}"
-    state: present
-  vars:
-    cephadm_packages:
-      - docker.io
-      - python3-pip
-      - python3-virtualenv
-
-- name: Start package services
-  service:
-    name: "{{ item }}"
-    state: started
-  with_items:
-    - docker
+- include: host.yml
+- include: cephadm.yml
+- include: ssh.yml
 
 - name: Create /etc/ceph directory
   file:
     path: /etc/ceph
     state: directory
 
-# TODO: allow using a defined interface _OR_ a specific IP address
-- name: Add local mgr/mons daemons, generate Ceph/SSH keys, and ceph.conf
+- name: Generate ceph.conf, deploy mgr/mons daemons
   command: >-
     /cephadm bootstrap
     --allow-fqdn-hostname

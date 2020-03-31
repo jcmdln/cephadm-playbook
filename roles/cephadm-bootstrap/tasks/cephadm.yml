@@ -1,0 +1,6 @@
+- name: Download cephadm
+  get_url:
+    url: https://raw.githubusercontent.com/jcmdln/ceph/octopus/src/cephadm/cephadm
+    dest: /usr/local/sbin/cephadm
+    mode: 0600
+  register: cephadm_installed

@@ -1,0 +1,11 @@
+- name: Install packages
+  package:
+    name: "{{ cephadm_host_packages }}"
+    state: present
+
+- name: Start package services
+  service:
+    name: "{{ item }}"
+    state: started
+  with_items:
+    - "{{ cephadm_host_services }}"
