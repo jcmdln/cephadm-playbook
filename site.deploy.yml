@@ -1,4 +1,3 @@
----
 # site-deploy.yml
 
 - name: Check
@@ -9,8 +8,6 @@
   roles:
     - role: cephadm-check
       tags: [check]
-    - roles: cephadm-setup
-      tags: [setup]
 
 - name: Bootstrap
   any_errors_fatal: true
