@@ -18,18 +18,19 @@
     cephadm_firewall_firewalld: >-
       {{ cephadm_firewall_firewalld | default(true) }}
 
-    cephadm_network_private_interface: >-
-      {{ cephadm_network_private_interface | default('') }}
-    cephadm_network_private_ips: >-
-      {{ cephadm_network_private_ips | default([]) }}
-    cephadm_network_private_vip: >-
-      {{ cephadm_network_private_vip | default('') }}
-    cephadm_network_public_interface: >-
-      {{ cephadm_network_public_interface | default('') }}
-    cephadm_network_public_ips: >-
-      {{ cephadm_network_public_ips | default([]) }}
-    cephadm_network_public_vip: >-
-      {{ cephadm_network_public_vip | default('') }}
+    cephadm_network_interface_cluster: >-
+      {{ cephadm_network_interface_cluster | default('') }}
+    cephadm_network_interface_public: >-
+      {{ cephadm_network_interface_public | default('') }}
+    cephadm_network_interface_monitor: >-
+      {{ cephadm_network_interface_monitor | default('') }}
+    cephadm_network_interface_radosgw: >-
+      {{ cephadm_network_interface_radosgw | default('') }}
+
+    cephadm_network_vip_cluster: >-
+      {{ cephadm_network_vip_cluster | default('') }}
+    cephadm_network_vip_public: >-
+      {{ cephadm_network_vip_public | default('') }}
 
     cephadm_osd_cpus: >-
       {{ cephadm_osd_cpus | default(1) }}
