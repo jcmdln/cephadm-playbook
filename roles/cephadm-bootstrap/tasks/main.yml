@@ -11,7 +11,7 @@
 
 - name: Generate ceph.conf, deploy mgr/mons daemons
   command: >-
-    /cephadm bootstrap
+    cephadm bootstrap
     --allow-fqdn-hostname
     --skip-dashboard
     --skip-firewalld

@@ -18,7 +18,7 @@
   pre_tasks:
     - name: check if /cephadm exists
       stat:
-        path: /cephadm
+        path: /usr/local/sbin/cephadm
       register: cephadm_installed
 
     - name: check if /etc/ceph/ceph.conf exists
@@ -37,7 +37,7 @@
   tasks:
     - name: Destroy a cluster
       command: >-
-        /cephadm shell -- ceph rm-cluster --force
+        cephadm shell -- ceph rm-cluster --force
         {{ cephadm_cluster_fsid }}
       failed_when: false
 
