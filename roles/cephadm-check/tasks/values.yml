@@ -12,7 +12,7 @@
       - "{{ cephadm_network_interface_radosgw }}"
   with_items: "{{ interfaces | unique }}"
 
-- name: check if hosts are able to reach each other
+- name: check if all Cluster Network interfaces are reachable
   command: |-
     ping -c 1 {{ target.address }}
   changed_when: false
@@ -22,6 +22,34 @@
     interface: "{{ cephadm_network_interface_cluster }}"
     ipver: "{{ cephadm_network_ip_version }}"
     target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  with_items:
+    - "{{ ansible_play_hosts_all }}"
+
+- name: check if all Public Network interfaces are reachable
+  command: |-
+    ping -c 1 {{ target.address }}
+  changed_when: false
+  failed_when: ping_result.rc > 0
+  register: ping_result
+  vars:
+    interface: "{{ cephadm_network_interface_public }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  when: interface != cephadm_network_interface_cluster
+  with_items:
+    - "{{ ansible_play_hosts_all }}"
+
+- name: check if all monitor interfaces are reachable
+  command: |-
+    ping -c 1 {{ target.address }}
+  changed_when: false
+  failed_when: ping_result.rc > 0
+  register: ping_result
+  vars:
+    interface: "{{ cephadm_network_interface_monitor }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  when: interface != cephadm_network_interface_cluster
   with_items:
     - "{{ ansible_play_hosts_all }}"
 
