@@ -1,68 +1,34 @@
----
-# cephadm-facts/tasks/check.yml
-
-- name: check if host OS is supported
-  fail:
-    msg: >-
-      Host OS {{ ansible_distribution }} {{ ansible_distribution_release }}
-      is not fully supported.  Please see
-      https://docs.ceph.com/docs/master/releases/octopus/
-      for more information.
-  failed_when: >-
-    ansible_distribution not in targets.keys()
-    or ansible_distribution_release not in releases
-  vars:
-    targets:
-      CentOS: ["8"]
-      Debian: ["buster"]
-      Ubuntu: ["bionic"]
-    releases: "{{ targets[ansible_distribution] }}"
-
-- name: check if cephadm_network_private_interface is defined
-  fail:
-    msg: >-
-      The variable 'cephadm_network_private_interface' is invalid!
-  failed_when:
-    - cephadm_network_private_interface is undefined
+# values.yml
 
 - name: check if defined network interfaces exist
   fail:
     msg: "The interface {{ item }} does not exist"
-  failed_when: interface not in interfaces
+  failed_when: item not in ansible_facts.interfaces
   vars:
-    interface: "{{ item }}"
-    interfaces: "{{ ansible_facts['interfaces'] }}"
-  with_items:
-    - "{{ cephadm_network_private_interface }}"
-    - "{{ cephadm_network_public_interface }}"
+    interfaces:
+      - "{{ cephadm_network_interface_cluster }}"
+      - "{{ cephadm_network_interface_public }}"
+      - "{{ cephadm_network_interface_monitor }}"
+      - "{{ cephadm_network_interface_radosgw }}"
+  with_items: "{{ interfaces | unique }}"
 
-# TODO: this bit is naive and doesn't do what is needed, but is
-# decent scaffolding.  Really need to be able to get the IP address
-# of the defined interface on all hosts to confirm the following:
-#  * all interfaces have different IPs
-#  * interfaces across hosts are able to reach each other
-#  * probably some other conditions I'm failing to think of.
-#  * use hostvars[hostname] with an exclusory condition
-##
 - name: check if hosts are able to reach each other
   command: |-
-    ping -c 1 {{ item['address'] }}
+    ping -c 1 {{ target.address }}
   changed_when: false
   failed_when: ping_result.rc > 0
   register: ping_result
   vars:
-    other_hosts: >-
-      hostvars[hostname]
+    interface: "{{ cephadm_network_interface_cluster }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
   with_items:
-    - "{{ ansible_facts[cephadm_network_private_interface]['ipv4'] }}"
-    - >-
-      {{ ansible_facts[cephadm_network_public_interface]['ipv4']
-      if cephadm_network_public_interface != cephadm_network_private_interface
-      else omit }}
+    - "{{ ansible_play_hosts_all }}"
 
 - name: check if cephadm_osd_devices is populated
   fail:
-    msg: "No storage devices listed in cephadm_osd_devices!"
+    msg: >-
+      No storage devices defined in cephadm_osd_devices!
   changed_when: false
   failed_when: cephadm_osd_devices | length < 1
 
