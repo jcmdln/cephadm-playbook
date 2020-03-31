@@ -10,6 +10,23 @@
   setup:
     gather_subset: all
 
+- name: check if host OS is supported
+  fail:
+    msg: >-
+      Host OS {{ ansible_distribution }} {{ ansible_distribution_release }}
+      is not fully supported.  Please see
+      https://docs.ceph.com/docs/master/releases/octopus/
+      for more information.
+  failed_when: >-
+    ansible_distribution not in targets.keys()
+    or ansible_distribution_release not in releases
+  vars:
+    targets:
+      CentOS: ["8"]
+      Debian: ["buster"]
+      Ubuntu: ["bionic"]
+    releases: "{{ targets[ansible_distribution] }}"
+
 - name: Set defined variables as facts
   include: facts.yml
 
