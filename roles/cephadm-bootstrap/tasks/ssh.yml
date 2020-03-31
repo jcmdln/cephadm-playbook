@@ -1,1 +1,4 @@
 - name: Create ssh keypair
+  fail:
+    msg: wewlad
+  when: false
