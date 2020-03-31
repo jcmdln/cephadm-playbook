@@ -15,9 +15,9 @@ mgrs:
 # reason to.
 mons:
   hosts:
-    node-1.aswl.org:
-    node-2.aswl.org:
-    node-3.aswl.org:
+    node-1.domain.tld:
+    node-2.domain.tld:
+    node-3.domain.tld:
 
 # These hosts with have RADOS Gateways (RGW) deployed to them.  Much
 # like how we handled ceph-mgr, we should co-mingle with ceph-mon to
