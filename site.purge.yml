@@ -28,7 +28,9 @@
     - name: Fail if cephadm isn't installed and deployed
       fail:
         msg: >-
-          Nah
+          Ceph does not appear to be deployed.  If Ceph really is
+          installed on the specified hosts, you may have to intervene
+          manually.
       when:
         - not cephadm_installed
         - not cephadm_deployed
@@ -38,30 +40,48 @@
       command: >-
         cephadm shell -- ceph rm-cluster --force
         {{ cephadm_cluster_fsid }}
+      changed_when:
+        - result.rc is defined
+        - result.rc > 0
       failed_when: false
+      register: result
 
     - name: Cleanup vgs
       command: >-
         vgremove -y ceph-*
+      changed_when:
+        - result.rc is defined
+        - result.rc > 0
       failed_when: false
+      register: result
 
     - name: Stop all running docker containers
       command: >-
-        docker ps | grep -v grep | grep -i ceph | awk '{print $1}'
-        | xargs docker stop
+        docker ps | grep -v grep | grep -i ceph | awk '{print $1}' | xargs docker stop
+      changed_when:
+        - result.rc is defined
+        - result.rc > 0
       failed_when: false
+      register: result
 
     - name: Docker system prune
       command: >-
         docker system prune -af
+      changed_when:
+        - result.rc is defined
+        - result.rc > 0
       failed_when: false
+      register: result
 
-    - name: Delete /etc/ceph
+    - name: Delete Ceph directories
       file:
-        path: /etc/ceph
+        path: "{{ item }}"
         state: absent
+      with_items:
+        - /etc/ceph
+        - /var/lib/ceph
 
     - name: Delete /cephadm
       file:
-        path: /cephadm
+        path: /usr/local/sbin/cephadm
         state: absent
