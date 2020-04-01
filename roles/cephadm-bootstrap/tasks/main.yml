@@ -26,13 +26,25 @@
 - name: Enable 'cephadm' orchestrator module
   command: >-
     cephadm shell -- ceph orch module enable cephadm
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
 
 - name: Use 'cephadm' as orchestrator backend
   command: >-
     cephadm shell -- ceph orch set backend cephadm
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
 
 - name: Add other hosts to the cluster
   command: >-
     cephadm shell -- ceph orch host add {{ item }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
   when: (cephadm_hosts | length) > 0
   with_items: "{{ cephadm_hosts | difference(inventory_hostname) }}"
