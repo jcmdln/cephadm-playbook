@@ -1,0 +1,4 @@
+# main.yml
+
+- include: packages.yml
+- include: ssh.yml

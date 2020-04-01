@@ -1,0 +1,33 @@
+- name: Create ssh keypair
+  openssh_keypair:
+    path: /tmp/ceph_rsa
+    size: 4096
+  delegate_to: localhost
+  run_once: true
+
+- name: get it
+  command: >-
+    cat /tmp/ceph_rsa.pub
+  changed_when:
+    - cephadm_pubkey.rc is defined
+    - cephadm_pubkey.rc > 0
+  delegate_to: localhost
+  register: cephadm_pubkey
+  run_once: true
+
+- name: Copy SSH keypair to all hosts
+  copy:
+    src: /tmp/{{ item }}
+    dest: ~/.ssh/{{ item }}
+    owner: root
+    group: root
+    mode: "0600"
+  with_items:
+    - ceph_rsa
+    - ceph_rsa.pub
+
+- name: Set authorized key in alternate location
+  authorized_key:
+    user: root
+    key: "{{ cephadm_pubkey.stdout_lines[0] }}"
+    state: present
