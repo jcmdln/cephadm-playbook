@@ -3,6 +3,9 @@
 
 - name: Set cephadm facts
   set_fact:
+    cephadm_hosts: >-
+      {{ ansible_play_hosts_all | unique }}
+
     cephadm_conf: >-
       {{ cephadm_conf | default({}) }}
     cephadm_conf_commands: >-

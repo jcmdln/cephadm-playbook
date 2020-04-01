@@ -23,7 +23,7 @@
     ipver: "{{ cephadm_network_ip_version }}"
     target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
   with_items:
-    - "{{ ansible_play_hosts_all }}"
+    - "{{ cephadm_hosts }}"
 
 - name: check if all Public Network interfaces are reachable
   command: |-
@@ -37,7 +37,7 @@
     target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
   when: interface != cephadm_network_interface_cluster
   with_items:
-    - "{{ ansible_play_hosts_all }}"
+    - "{{ cephadm_hosts }}"
 
 - name: check if all monitor interfaces are reachable
   command: |-
@@ -51,7 +51,7 @@
     target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
   when: interface != cephadm_network_interface_cluster
   with_items:
-    - "{{ ansible_play_hosts_all }}"
+    - "{{ cephadm_hosts }}"
 
 - name: check if cephadm_osd_devices is populated
   fail:
