@@ -18,4 +18,12 @@
     --skip-mon-network
     --skip-monitoring-stack
     --skip-ssh
-    --mon-ip {{ ansible_facts[cephadm_network_public_interface].[cephadm_network_ip_version].address }}
+    --mon-ip {{ ansible_facts[cephadm_network_interface_public][cephadm_network_ip_version].address }}
+
+- name: Enable 'cephadm' orchestrator module
+  command: >-
+    cephadm shell -- ceph mgr module enable cephadm
+
+- name: Use 'cephadm' as orchestrator backend
+  command: >-
+    cephadm shell -- ceph mgr set backend cephadm
