@@ -9,6 +9,14 @@
     - role: cephadm-check
       tags: [check]
 
+- name: Setup
+  any_errors_fatal: true
+  gather_facts: false
+  hosts: all
+  tags: [setup]
+  roles:
+    - cephadm-setup
+
 - name: Bootstrap
   any_errors_fatal: true
   gather_facts: false
