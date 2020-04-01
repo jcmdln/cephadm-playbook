@@ -5,7 +5,7 @@
   delegate_to: localhost
   run_once: true
 
-- name: get it
+- name: Store SSH pubkey as a variable
   command: >-
     cat /tmp/ceph_rsa.pub
   changed_when:
