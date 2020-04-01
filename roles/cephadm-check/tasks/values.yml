@@ -58,7 +58,7 @@
     msg: >-
       No storage devices defined in cephadm_osd_devices!
   changed_when: false
-  failed_when: cephadm_osd_devices | length < 1
+  failed_when: (cephadm_osd_devices | length) < 1
 
 - name: enumerate storage devices from cephadm_osd_devices
   set_fact:
