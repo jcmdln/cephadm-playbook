@@ -78,10 +78,10 @@ cephadm_network_vip_public: ""
 
 cephadm_osd_cpus: 1
 
-# This one might be complicated to explain.
+# Not sure how to best explain this behavior yet.
 #
-#   devices:
-#     <arbitrary>
+#   cephadm_osd_devices:
+#     <arbitrary group name>
 #       block:
 #         - /dev/sdb
 #       db:
@@ -89,7 +89,8 @@ cephadm_osd_cpus: 1
 #       wal:
 #         - /dev/sdd
 #
-##
+# The error messages are a bit messy, but this should error under any
+# type of misconfiguration.
 cephadm_osd_devices:
   hdd:
     block:
