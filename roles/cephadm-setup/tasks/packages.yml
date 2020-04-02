@@ -11,8 +11,9 @@
     update_cache: false
   register: cephadm_apt_update
 
-- name: (Ubuntu) Update APT cache
+- name: (Debian) Update APT cache
   apt:
+    cache_valid_time: "3600"
     state: present
     update_cache: true
 
