@@ -36,7 +36,7 @@
 - name: Set dashboard secure port
   command: >-
     ceph config set mgr mgr/dashboard/ssl_server_port
-    {{ cephadm_dashboard_ssl_server_port }}
+    {{ cephadm_dashboard_server_port_ssl }}
   changed_when:
     - result.rc is defined
     - result.rc > 0
@@ -45,6 +45,9 @@
 - name: Create dashboard account
   command: >-
     ceph dashboard ac-user-create
+    --force-password
+    {{ "--pwd-update-required"
+    if cephadm_dashboard_password == "admin" }}
     {{ cephadm_dashboard_username }}
     {{ cephadm_dashboard_password }}
     administrator
