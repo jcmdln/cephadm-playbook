@@ -1,4 +1,9 @@
----
+# main.yml
+
+- name: End this play if cephadm_dashboard is false
+  meta: end_play
+  when: not cephadm_dashboard
+
 - name: Enable dashboard
   command: >-
     ceph mgr module enable dashboard
