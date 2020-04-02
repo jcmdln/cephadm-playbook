@@ -11,7 +11,7 @@
     cephadm bootstrap
     --allow-fqdn-hostname
     --skip-dashboard
-    --skip-firewalld
+    {{ "--skip-firewalld" if cephadm_firewall_firewalld == 'False' }}
     --skip-mon-network
     --skip-monitoring-stack
     --mon-ip {{ ansible_facts[cephadm_network_interface_public][cephadm_network_ip_version].address }}
