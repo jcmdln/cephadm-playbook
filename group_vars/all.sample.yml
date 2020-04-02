@@ -8,16 +8,22 @@
 # Dashboard
 #
 
+# Whether the dashboard should be deployed.
 cephadm_dashboard: true
 
+# The username and password to use for the administrative user
 cephadm_dashboard_password: admin
 cephadm_dashboard_username: admin
 
+# The IP address and port(s) to use for the dashboard
 cephadm_dashboard_server_addr: >-
   "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
 cephadm_dashboard_server_port: 8080
 cephadm_dashboard_server_port_ssl: 8443
 
+# Add your own certs to the dashboard, if desired.  Maybe I should
+# see about using LetsEncrypt to make/manage SSLs across the
+# deployment.
 cephadm_dashboard_ssl_crt: ""
 cephadm_dashboard_ssl_key: ""
 
@@ -25,18 +31,24 @@ cephadm_dashboard_ssl_key: ""
 # Firewall
 #
 
+# Placeholder
 cephadm_firewall_firewalld: true
 
 #
 # Health
 #
 
+# Placeholder
 cephadm_health_mon_check: ""
 
 #
 # Host
 #
 
+# Packages that we install using the host package manager.  Right now
+# this is specific to Ubuntu 18.04 LTS, but later I'll hide these bits
+# in a role and "automagically" figure out what should be in place,
+# unless this variable is defined by you.
 cephadm_host_packages:
   - ceph-common
   - cephadm
@@ -44,6 +56,7 @@ cephadm_host_packages:
   - python3-pip
   - python3-virtualenv
 
+# Same with the above.
 cephadm_host_services:
   - docker
 
@@ -51,21 +64,28 @@ cephadm_host_services:
 # Mgr
 #
 
+# k,v for configuration changes to make
 cephadm_mgr_conf: {}
-cephadm_mgr_conf_commands: []
 
 #
 # Mon
 #
 
+# I don't remember what this is for, I think it was just a placeholder
 cephadm_mon: ""
 
 #
 # Network
 #
 
+#
+# Type: string
+# Values: ipv4||ipv6
 cephadm_network_ip_version: ipv4
 
+# The network interface assignments you want to make.  At minimum you
+# must define your cluster interface, and the others will simply also
+# use it.
 cephadm_network_interface_cluster: eno1
 cephadm_network_interface_public: "{{ cephadm_network_interface_cluster }}"
 cephadm_network_interface_monitor: "{{ cephadm_network_interface_public }}"
@@ -78,18 +98,23 @@ cephadm_network_vip_public: ""
 # OSD
 #
 
+# Would like to restrict resource usage, but not sure how I'll handle
+# that quite yet.
 cephadm_osd_cpus: 1
 
 # Not sure how to best explain this behavior yet.
 #
 #   cephadm_osd_devices:
-#     <arbitrary group name>
+#     butter_sandwich:
 #       block:
 #         - /dev/sdb
 #       db:
 #         - /dev/sdc
-#       wal:
+#     another_one:
+#       block:
 #         - /dev/sdd
+#       wal:
+#         - /dev/sde
 #
 # The error messages are a bit messy, but this should error under any
 # type of misconfiguration.
@@ -101,6 +126,8 @@ cephadm_osd_devices:
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#human-to-bytes
 cephadm_osd_memory: "4 GB"
 
+# Worth it to allow fiddling with these settings as part of a
+# deployment?  Seems valuable but haven't put thought into it.
 cephadm_osd_per_hdd: 1
 cephadm_osd_per_nvme: 4
 cephadm_osd_per_ssd: 2
