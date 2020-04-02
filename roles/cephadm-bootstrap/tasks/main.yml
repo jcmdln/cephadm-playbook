@@ -15,13 +15,13 @@
     --skip-mon-network
     --skip-monitoring-stack
     --mon-ip {{ ansible_facts[cephadm_network_interface_public][cephadm_network_ip_version].address }}
-  when: cephadm_config_dir.changed
+  when: cephadm_config_dir.changed == 'False'
 
 - name: Add cephadm key to all other hosts
-  command: >-
+  shell: >-
     ssh-copy-id -f
-    -i ~/.ssh/cephadm_rsa
-    -o 'IdentityFile /etc/ceph/ceph.pub'
+    -i /etc/ceph/ceph.pub
+    -o 'IdentityFile ~/.ssh/cephadm_rsa'
     {{ item }}
   changed_when:
     - result.rc is defined
