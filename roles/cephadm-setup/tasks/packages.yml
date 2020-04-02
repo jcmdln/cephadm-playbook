@@ -1,3 +1,21 @@
+- name: (Debian) Add Ceph key
+  apt_key:
+    url: https://download.ceph.com/keys/release.asc
+    state: present
+
+- name: (Debian) Add Ceph repository
+  apt_repository:
+    repo: deb https://download.ceph.com/debian-octopus/ {{ ansible_distribution_release }} main
+    state: present
+    filename: ceph
+    update_cache: false
+  register: cephadm_apt_update
+
+- name: (Ubuntu) Update APT cache
+  apt:
+    state: present
+    update_cache: true
+
 - name: Install packages
   package:
     name: "{{ cephadm_host_packages }}"
