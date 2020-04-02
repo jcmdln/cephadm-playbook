@@ -40,36 +40,24 @@
       command: >-
         cephadm shell -- ceph rm-cluster --force
         {{ cephadm_cluster_fsid }}
-      changed_when:
-        - result.rc is defined
-        - result.rc > 0
       failed_when: false
       register: result
 
     - name: Cleanup vgs
       command: >-
         vgremove -y ceph-*
-      changed_when:
-        - result.rc is defined
-        - result.rc > 0
       failed_when: false
       register: result
 
     - name: Stop all running docker containers
-      command: >-
+      shell: >-
         docker ps | grep -v grep | grep -i ceph | awk '{print $1}' | xargs docker stop
-      changed_when:
-        - result.rc is defined
-        - result.rc > 0
       failed_when: false
       register: result
 
     - name: Docker system prune
       command: >-
         docker system prune -af
-      changed_when:
-        - result.rc is defined
-        - result.rc > 0
       failed_when: false
       register: result
 
@@ -84,4 +72,9 @@
     - name: Delete /cephadm
       file:
         path: /usr/local/sbin/cephadm
+        state: absent
+
+    - name: Uninstall packages
+      package:
+        name: "{{ cephadm_host_packages }}"
         state: absent
