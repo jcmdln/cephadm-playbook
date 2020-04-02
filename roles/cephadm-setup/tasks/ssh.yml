@@ -1,13 +1,13 @@
 - name: Create ssh keypair
   openssh_keypair:
-    path: /tmp/ceph_rsa
+    path: /tmp/cephadm_rsa
     size: 4096
   delegate_to: localhost
   run_once: true
 
 - name: Store SSH pubkey as a variable
   command: >-
-    cat /tmp/ceph_rsa.pub
+    cat /tmp/cephadm_rsa.pub
   changed_when:
     - cephadm_pubkey.rc is defined
     - cephadm_pubkey.rc > 0
@@ -23,11 +23,28 @@
     group: root
     mode: "0600"
   with_items:
-    - ceph_rsa
-    - ceph_rsa.pub
+    - cephadm_rsa
+    - cephadm_rsa.pub
 
 - name: Set authorized key in alternate location
   authorized_key:
     user: root
     key: "{{ cephadm_pubkey.stdout_lines[0] }}"
     state: present
+
+- name: Add ~/.ssh/config referencing all other hosts
+  blockinfile:
+    block: |
+      # ~/.ssh/config
+
+      {% for host in cephadm_hosts | difference(inventory_hostname) %}
+      Host {{ host }}
+        HostName {{ hostvars[host]['ansible_' + interface][ipver].address }}
+        IdentityFile ~/.ssh/ceph_rsa
+        User root
+      {% endfor %}
+    create: true
+    dest: ~/.ssh/config
+  vars:
+    interface: "{{ cephadm_network_interface_cluster }}"
+    ipver: "{{ cephadm_network_ip_version }}"
