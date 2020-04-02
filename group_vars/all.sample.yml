@@ -38,6 +38,8 @@ cephadm_health_mon_check: ""
 #
 
 cephadm_host_packages:
+  - ceph-common
+  - cephadm
   - docker.io
   - python3-pip
   - python3-virtualenv
