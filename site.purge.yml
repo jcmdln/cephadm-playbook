@@ -67,12 +67,7 @@
         state: absent
       with_items:
         - /etc/ceph
-        - /var/lib/ceph
-
-    - name: Delete /cephadm
-      file:
-        path: /usr/local/sbin/cephadm
-        state: absent
+        - /var/lib/ceph/{{ cephadm_cluster_fsid }}
 
     - name: Uninstall packages
       package:
