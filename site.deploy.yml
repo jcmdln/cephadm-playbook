@@ -10,7 +10,7 @@
     - role: cephadm-check
       tags: [always, check]
 
-    - roles: cephadm-setup
+    - role: cephadm-setup
       tags: [setup]
 
 - name: Deploy
@@ -23,7 +23,7 @@
     - role: cephadm-bootstrap
       tags: [bootstrap]
 
-    - roles: cephadm-dashboard
+    - role: cephadm-dashboard
       tags: [dashboard]
 
     - role: cephadm-mon
