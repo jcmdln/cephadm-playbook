@@ -8,8 +8,10 @@
     interfaces:
       - "{{ cephadm_network_interface_cluster }}"
       - "{{ cephadm_network_interface_public }}"
-      - "{{ cephadm_network_interface_monitor }}"
-      - "{{ cephadm_network_interface_radosgw }}"
+      - "{{ cephadm_network_interface_mgrs }}"
+      - "{{ cephadm_network_interface_mons }}"
+      - "{{ cephadm_network_interface_osds }}"
+      - "{{ cephadm_network_interface_rgws }}"
   with_items: "{{ interfaces | unique }}"
 
 - name: check if all Cluster Network interfaces are reachable
@@ -39,17 +41,67 @@
   with_items:
     - "{{ cephadm_hosts }}"
 
-- name: check if all monitor interfaces are reachable
+- name: check if all mgrs interfaces are reachable
   command: |-
     ping -c 1 {{ target.address }}
   changed_when: false
   failed_when: ping_result.rc > 0
   register: ping_result
   vars:
-    interface: "{{ cephadm_network_interface_monitor }}"
+    interface: "{{ cephadm_network_interface_mgrs }}"
     ipver: "{{ cephadm_network_ip_version }}"
     target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
-  when: interface != cephadm_network_interface_cluster
+  when:
+    - interface != cephadm_network_interface_cluster
+    - interface != cephadm_network_interface_public
+  with_items:
+    - "{{ cephadm_hosts }}"
+
+- name: check if all mons interfaces are reachable
+  command: |-
+    ping -c 1 {{ target.address }}
+  changed_when: false
+  failed_when: ping_result.rc > 0
+  register: ping_result
+  vars:
+    interface: "{{ cephadm_network_interface_mons }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  when:
+    - interface != cephadm_network_interface_cluster
+    - interface != cephadm_network_interface_public
+  with_items:
+    - "{{ cephadm_hosts }}"
+
+- name: check if all osds interfaces are reachable
+  command: |-
+    ping -c 1 {{ target.address }}
+  changed_when: false
+  failed_when: ping_result.rc > 0
+  register: ping_result
+  vars:
+    interface: "{{ cephadm_network_interface_osds }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  when:
+    - interface != cephadm_network_interface_cluster
+    - interface != cephadm_network_interface_public
+  with_items:
+    - "{{ cephadm_hosts }}"
+
+- name: check if all rgws interfaces are reachable
+  command: |-
+    ping -c 1 {{ target.address }}
+  changed_when: false
+  failed_when: ping_result.rc > 0
+  register: ping_result
+  vars:
+    interface: "{{ cephadm_network_interface_rgws }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipver] }}"
+  when:
+    - interface != cephadm_network_interface_cluster
+    - interface != cephadm_network_interface_public
   with_items:
     - "{{ cephadm_hosts }}"
 
