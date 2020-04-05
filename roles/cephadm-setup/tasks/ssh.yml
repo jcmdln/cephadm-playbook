@@ -1,3 +1,5 @@
+# ssh.yml
+
 - name: Create ssh keypair
   openssh_keypair:
     path: /tmp/cephadm_rsa
