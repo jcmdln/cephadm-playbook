@@ -26,10 +26,10 @@
       tags: [dashboard]
 
     - role: cephadm-mon
-      tags: [mon]
+      tags: [mon, mons]
 
     - role: cephadm-mgr
-      tags: [mgr]
+      tags: [mgr, mgrs]
 
     - role: cephadm-osd
-      tags: [never, osd]
+      tags: [never, osd, osds]
