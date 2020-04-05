@@ -5,42 +5,42 @@
     cephadm_hosts: >-
       {{ ansible_play_hosts_all | unique }}
     cephadm_hosts_list: >-
-      {% for host in cephadm_hosts -%}
+      {% for host in ansible_play_hosts_all | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
     cephadm_hosts_mgr: >-
-      {{ groups.mgr | unique }}
+      {{ groups.mgrs | unique }}
     cephadm_hosts_mgr_list: >-
-      {% for host in cephadm_hosts_mgr -%}
+      {% for host in groups.mgrs | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
     cephadm_hosts_mons: >-
       {{ groups.mons | unique }}
     cephadm_hosts_mons_list: >-
-      {% for host in cephadm_hosts_mons -%}
+      {% for host in groups.mons | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
     cephadm_hosts_osds: >-
       {{ groups.osds | unique }}
     cephadm_hosts_osds_list: >-
-      {% for host in cephadm_hosts_osds -%}
+      {% for host in groups.osds | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
     cephadm_hosts_rgws: >-
       {{ groups.rgws | unique }}
     cephadm_hosts_rgws_list: >-
-      {% for host in cephadm_hosts_rgws -%}
+      {% for host in groups.rgws | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
     cephadm_hosts_rgwlbs: >-
       {{ groups.rgwlbs | unique }}
     cephadm_hosts_rgwlbs_list: >-
-      {% for host in cephadm_hosts_rgwlbs -%}
+      {% for host in groups.rgwlbs | unique -%}
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
