@@ -1,11 +1,51 @@
----
-# cephadm-check/tasks/facts.yml
+# facts.yml
 
-- name: Set cephadm facts
+- name: Set cephadm_hosts_* facts for easy references
   set_fact:
     cephadm_hosts: >-
       {{ ansible_play_hosts_all | unique }}
+    cephadm_hosts_list: >-
+      {% for host in cephadm_hosts -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
 
+    cephadm_hosts_mgr: >-
+      {{ groups.mgr | unique }}
+    cephadm_hosts_mgr_list: >-
+      {% for host in cephadm_hosts_mgr -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
+
+    cephadm_hosts_mons: >-
+      {{ groups.mons | unique }}
+    cephadm_hosts_mons_list: >-
+      {% for host in cephadm_hosts_mons -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
+
+    cephadm_hosts_osds: >-
+      {{ groups.osds | unique }}
+    cephadm_hosts_osds_list: >-
+      {% for host in cephadm_hosts_osds -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
+
+    cephadm_hosts_rgws: >-
+      {{ groups.rgws | unique }}
+    cephadm_hosts_rgws_list: >-
+      {% for host in cephadm_hosts_rgws -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
+
+    cephadm_hosts_rgwlbs: >-
+      {{ groups.rgwlbs | unique }}
+    cephadm_hosts_rgwlbs_list: >-
+      {% for host in cephadm_hosts_rgwlbs -%}
+      {{ host }}{% if not loop.last %},{% endif -%}
+      {% endfor %}
+
+- name: Set cephadm configuration facts
+  set_fact:
     cephadm_conf: >-
       {{ cephadm_conf | default({}) }}
     cephadm_conf_commands: >-
