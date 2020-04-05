@@ -1,4 +1,3 @@
----
 # inventory.sample.yml
 
 # These hosts will have ceph-mgr deployed to them.  In general the
@@ -8,7 +7,7 @@ mgrs:
   children:
     mons:
 
-# These hosts will have ceph-mon deployed to them.  Esnure that you
+# These hosts will have ceph-mon deployed to them.  Ensure that you
 # always maintain quorum by using an odd number of ceph-mon such as
 # 1, 3, or 5, though there are diminishing returns for using more than
 # 5 mons.  Define no more than 5 ceph-mon hosts unless you have a good
@@ -18,6 +17,14 @@ mons:
     node-1.domain.tld:
     node-2.domain.tld:
     node-3.domain.tld:
+
+# These hosts will have OSDs deployed them as defined in the
+# 'cephadm_osd_devices' variable.  If you have per-host differences in
+# the storage devices available, consider creating `host_vars` for
+# handling such nuances rather than adding per-host clutter here.
+osds:
+  children:
+    mons:
 
 # These hosts with have RADOS Gateways (RGW) deployed to them.  Much
 # like how we handled ceph-mgr, we should co-mingle with ceph-mon to
