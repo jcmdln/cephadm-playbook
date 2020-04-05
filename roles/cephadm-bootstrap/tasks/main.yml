@@ -4,9 +4,13 @@
   file:
     path: /etc/ceph
     state: directory
-  register: cephadm_config_dir
 
-- name: Generate ceph.conf, deploy mgr/mons daemons
+- name: Check if /etc/ceph/ceph.conf exists
+  stat:
+    path: /etc/ceph/ceph.conf
+  register: cephadm_check_ceph_conf
+
+- name: Bootstrap Ceph
   command: >-
     cephadm bootstrap
     --allow-fqdn-hostname
@@ -15,9 +19,17 @@
     --skip-mon-network
     --skip-monitoring-stack
     --mon-ip {{ ansible_facts[cephadm_network_interface_public][cephadm_network_ip_version].address }}
-  when: cephadm_config_dir.changed == 'False'
+  when: not cephadm_check_ceph_conf.stat.exists
 
-- name: Add cephadm key to all other hosts
+- name: Show output of 'ceph status' for debugging, if needed
+  command: >-
+    ceph status
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Add cephadm pubkey to all other hosts
   shell: >-
     ssh-copy-id -f
     -i /etc/ceph/ceph.pub
