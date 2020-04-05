@@ -1,0 +1,9 @@
+# hostname.yml
+
+- name: Set hostname to match inventory
+  command: >-
+    hostnamectl set-hostname {{ inventory_hostname }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result

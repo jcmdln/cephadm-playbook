@@ -1,4 +1,5 @@
 # main.yml
 
+- include: hostname.yml
 - include: packages.yml
 - include: ssh.yml
