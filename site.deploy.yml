@@ -4,7 +4,6 @@
   any_errors_fatal: true
   gather_facts: false
   hosts: all
-  tags: [always]
 
   roles:
     - role: cephadm-check
