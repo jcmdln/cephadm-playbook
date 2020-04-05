@@ -77,8 +77,8 @@
 
     cephadm_osd_cpus: >-
       {{ cephadm_osd_cpus | default(1) }}
-    cephadm_osd_devices: >-
-      {{ cephadm_osd_devices | default({}) }}
+    cephadm_osd_drivegroups: >-
+      {{ cephadm_osd_drivegroups | default({}) }}
     cephadm_osd_memory: >-
       {{ (cephadm_osd_memory | human_to_bytes)
       if cephadm_osd_memory is defined

@@ -53,42 +53,11 @@
   with_items:
     - "{{ cephadm_hosts }}"
 
-- name: check if cephadm_osd_devices is populated
+- name: check if cephadm_osd_drivegroups is defined and populated
   fail:
     msg: >-
-      No storage devices defined in cephadm_osd_devices!
+      No storage devices defined in cephadm_osd_drivegroups!
   changed_when: false
-  failed_when: (cephadm_osd_devices | length) < 1
-
-- name: enumerate storage devices from cephadm_osd_devices
-  set_fact:
-    cephadm_osd_devices_defined: "{{ defined_devices|unique }}"
   failed_when:
-    - cephadm_osd_devices is undefined
-    - cephadm_osd_devices | length < 1
-  vars:
-    devices: "{{ cephadm_osd_devices[item.key] }}"
-    defined_devices:
-      - "{{ devices['block'] }}"
-      - "{{ devices['db']  if devices['db']  is defined else [] }}"
-      - "{{ devices['wal'] if devices['wal'] is defined else [] }}"
-  with_items: "{{ cephadm_osd_devices | dict2items }}"
-
-# TODO: This might break depending on how Ansible enumerates
-# storage devices across Linux distributions.  Doesn't appear that
-# RAID/HBA controllers impede us from collecting accurate
-# information, but need to _confirm_ that.
-- name: enumerate storage devices from ansible_facts['devices']
-  set_fact:
-    cephadm_osd_devices_found: "{{ found_devices }}"
-  vars:
-    found_devices: "{{ ansible_facts['devices'].keys() | list }}"
-
-- name: check if defined storage devices are present
-  fail:
-    msg: "The defined device {{ device }} was not found!"
-  changed_when: false
-  failed_when: device not in cephadm_osd_devices_found
-  vars:
-    device: "{{ item.split(':')[0].split('/dev/')[1] }}"
-  with_items: "{{ cephadm_osd_devices_defined }}"
+    - cephadm_osd_drivegroups is undefined
+    - (cephadm_osd_drivegroups | length) < 1

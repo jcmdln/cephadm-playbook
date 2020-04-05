@@ -102,32 +102,16 @@ cephadm_network_vip_public: ""
 # that quite yet.
 cephadm_osd_cpus: 1
 
-# Not sure how to best explain this behavior yet.
-#
-#   cephadm_osd_devices:
-#     butter_sandwich:
-#       block:
-#         - /dev/sdb
-#       db:
-#         - /dev/sdc
-#     another_one:
-#       block:
-#         - /dev/sdd
-#       wal:
-#         - /dev/sde
-#
-# The error messages are a bit messy, but this should error under any
-# type of misconfiguration.
-cephadm_osd_devices:
-  hdd:
-    block:
-      - /dev/sdb
+# https://docs.ceph.com/docs/octopus/cephadm/drivegroups/
+cephadm_osd_drivegroups:
+  # group name
+  default:
+    # hosts to match against
+    host_pattern: "*"
+    # type of device to appy specs to
+    data_devices:
+      # a filter, saying to use all devices marked 'available'
+      all: true
 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#human-to-bytes
 cephadm_osd_memory: "4 GB"
-
-# Worth it to allow fiddling with these settings as part of a
-# deployment?  Seems valuable but haven't put thought into it.
-cephadm_osd_per_hdd: 1
-cephadm_osd_per_nvme: 4
-cephadm_osd_per_ssd: 2

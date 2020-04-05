@@ -128,13 +128,13 @@
   failed_when: >-
     cephadm_osd_cpus | int < 1
 
-- name: check if 'cephadm_osd_devices' is type 'mapping'
+- name: check if 'cephadm_osd_drivegroups' is type 'mapping'
   fail:
     msg: >-
-      Invalid value for variable 'cephadm_osd_devices':
-      {{ cephadm_osd_devices }}
+      Invalid value for variable 'cephadm_osd_drivegroups':
+      {{ cephadm_osd_drivegroups }}
   failed_when: >-
-    cephadm_osd_devices is not mapping
+    cephadm_osd_drivegroups is not mapping
 
 - name: check if 'cephadm_osd_memory' is type 'number'
   fail:
