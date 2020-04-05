@@ -79,8 +79,7 @@ cephadm_mon: ""
 #
 
 #
-# Type: string
-# Values: ipv4||ipv6
+# Values: ipv4, ipv6
 cephadm_network_ip_version: ipv4
 
 # The network interface assignments you want to make.  At minimum you
@@ -88,11 +87,11 @@ cephadm_network_ip_version: ipv4
 # use it.
 cephadm_network_interface_cluster: eno1
 cephadm_network_interface_public: "{{ cephadm_network_interface_cluster }}"
-cephadm_network_interface_monitor: "{{ cephadm_network_interface_public }}"
-cephadm_network_interface_radosgw: "{{ cephadm_network_interface_public }}"
 
-cephadm_network_vip_cluster: ""
-cephadm_network_vip_public: ""
+cephadm_network_interface_mgrs: "{{ cephadm_network_interface_cluster }}"
+cephadm_network_interface_mons: "{{ cephadm_network_interface_public }}"
+cephadm_network_interface_osds: "{{ cephadm_network_interface_cluster }}"
+cephadm_network_interface_rgws: "{{ cephadm_network_interface_public }}"
 
 #
 # OSD
