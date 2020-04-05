@@ -1,19 +1,20 @@
+# packages.yml
+
 - name: (Debian) Add Ceph key
   apt_key:
-    url: https://download.ceph.com/keys/release.asc
     state: present
+    url: https://download.ceph.com/keys/release.asc
 
 - name: (Debian) Add Ceph repository
   apt_repository:
+    filename: ceph
     repo: deb https://download.ceph.com/debian-octopus/ {{ ansible_distribution_release }} main
     state: present
-    filename: ceph
     update_cache: false
-  register: cephadm_apt_update
 
 - name: (Debian) Update APT cache
   apt:
-    cache_valid_time: "3600"
+    cache_valid_time: "900"
     state: present
     update_cache: true
 
