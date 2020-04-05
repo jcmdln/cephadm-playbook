@@ -5,23 +5,20 @@
   gather_facts: false
   hosts: all
   tags: [always]
+
   roles:
     - role: cephadm-check
-      tags: [check]
+      tags: [always, check]
 
-- name: Setup
-  any_errors_fatal: true
-  gather_facts: false
-  hosts: all
-  tags: [setup]
-  roles:
-    - cephadm-setup
+    - roles: cephadm-setup
+      tags: [setup]
 
 - name: Deploy
   any_errors_fatal: true
   gather_facts: false
   hosts: mons[0]
   tags: [deploy]
+
   roles:
     - role: cephadm-bootstrap
       tags: [bootstrap]
