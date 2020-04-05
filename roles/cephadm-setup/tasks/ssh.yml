@@ -35,13 +35,15 @@
 - name: Add ~/.ssh/config referencing all other hosts
   blockinfile:
     block: |
-      # ~/.ssh/config
-
       {% for host in cephadm_hosts | difference(inventory_hostname) %}
       Host {{ host }}
         HostName {{ hostvars[host]['ansible_' + interface][ipver].address }}
         IdentityFile ~/.ssh/ceph_rsa
+        PreferredAuthentications publickey
         User root
+      {% if not loop.last %}
+
+      {% endif %}
       {% endfor %}
     create: true
     dest: ~/.ssh/config
