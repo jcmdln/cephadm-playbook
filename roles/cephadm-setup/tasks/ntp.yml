@@ -1,0 +1,9 @@
+# time.yml
+
+- name: Enable time sync
+  command: >-
+    timedatectl set-ntp on
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
