@@ -9,17 +9,12 @@
 from __future__ import absolute_import
 from ansible.module_utils.basic import AnsibleModule
 
+#    add-repo            configure package repository
+#    rm-repo             remove package repository configuration
+
 
 def main():
-    module_args = {
-        "config": {},
-        "fsid": {},
-        "dashboard": {"type": "bool", "default": False,},
-        "dashboard_user": {"type": "str", "default": ""},
-        "dashboard_password": {"type": "str", "default": ""},
-        "skip_ping_check": {},
-        "skip_pull": {},
-    }
+    module_args = {}
 
     module = AnsibleModule(argument_spec=module_args,)
 

@@ -9,17 +9,14 @@
 from __future__ import absolute_import
 from ansible.module_utils.basic import AnsibleModule
 
+#    version             get ceph version from container
+#    ls                  list daemon instances on this host
+#    list-networks       list IP networks
+#    logs                print journald logs for a daemon container
+
 
 def main():
-    module_args = {
-        "config": {},
-        "fsid": {},
-        "dashboard": {"type": "bool", "default": False,},
-        "dashboard_user": {"type": "str", "default": ""},
-        "dashboard_password": {"type": "str", "default": ""},
-        "skip_ping_check": {},
-        "skip_pull": {},
-    }
+    module_args = {}
 
     module = AnsibleModule(argument_spec=module_args,)
 
