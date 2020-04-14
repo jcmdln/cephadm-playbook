@@ -1,5 +1,13 @@
 # main.yml
 
 - include: hostname.yml
+  tags: [setup-hostname]
+
+- include: ntp.yml
+  tags: [setup-ntp]
+
 - include: packages.yml
+  tags: [setup-packages]
+
 - include: ssh.yml
+  tags: [setup-ssh]
