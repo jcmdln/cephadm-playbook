@@ -67,7 +67,7 @@
         state: absent
       with_items:
         - /etc/ceph
-        - /var/lib/ceph/{{ cephadm_cluster_fsid }}
+        - /var/lib/ceph
 
     - name: Uninstall packages
       package:
