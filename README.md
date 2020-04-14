@@ -2,6 +2,10 @@ cephadm-ansible
 ===================
 **Automate deploying Ceph at scale using cephadm and Ansible**
 
+**NOTE**: This has basically reached the point of gross scaffolding
+that kind of works.  Don't run this and expect anything positive to
+happen.
+
 [cephadm-ansible] is an Ansible playbook that deploys [Ceph] by
 automating the use of the new [cephadm] script.  The intention is to
 explore creating an alternative to [ceph-ansible] that more closely
