@@ -32,6 +32,39 @@ def bootstrap(r, m):
     if r["config"]:
         r["command"] = "%s --config %s" % (r["command"], r["config"])
 
+    if r["fsid"]:
+        r["command"] = "%s --fsid %s" % (r["command"], r["fsid"])
+
+    if r["mgr_id"]:
+        r["command"] = "%s --mgr-id %s" % (r["command"], r["mgr_id"])
+
+    if r["mon_addrv"]:
+        r["command"] = "%s --mon-addrv %s" % (r["command"], r["mon_addrv"])
+
+    if r["mon_id"]:
+        r["command"] = "%s --mon-id %s" % (r["command"], r["mon_id"])
+
+    if r["no_minimize_config"]:
+        r["command"] = "%s --no-minimize-config" % r["command"]
+
+    if r["orphan_initial_daemons"]:
+        r["command"] = "%s --orphan-initial-daemons" % r["command"]
+
+    if r["output_config"]:
+        r["command"] = "%s --output-config %s" % (r["command"], r["output_config"])
+
+    if r["output_dir"]:
+        r["command"] = "%s --output-dir %s" % (r["command"], r["output_dir"])
+
+    if r["output_keyring"]:
+        r["command"] = "%s --output-keyring %s" % (r["command"], r["output_keyring"])
+
+    if r["output_pub_ssh_key"]:
+        r["command"] = "%s --output-pub-ssh-key %s" % (
+            r["command"],
+            r["output_pub_ssh_key"],
+        )
+
     if r["skip_dashboard"]:
         r["command"] = "%s --skip-dashboard" % r["command"]
     else:
@@ -64,6 +97,18 @@ def bootstrap(r, m):
 
     if r["skip_monitoring_stack"]:
         r["command"] = "%s --skip-monitoring-stack" % r["command"]
+
+    if r["skip_ping_check"]:
+        r["command"] = "%s --skip-ping-check" % r["command"]
+
+    if r["skip_prepare_host"]:
+        r["command"] = "%s --skip-prepare-host" % r["command"]
+
+    if r["skip_pull"]:
+        r["command"] = "%s --skip-pull" % r["command"]
+
+    if r["skip_ssh"]:
+        r["command"] = "%s --skip-ssh" % r["command"]
 
     # Run the command, catching any stdout/stderr
     r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
