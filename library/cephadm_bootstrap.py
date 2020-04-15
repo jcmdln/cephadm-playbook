@@ -10,10 +10,10 @@ from __future__ import absolute_import
 from ansible.module_utils.basic import AnsibleModule
 
 
-def bootstrap(r, module):
+def bootstrap(r, m):
     # Check if 'mon_ip' is an empty string first so we can error as
     # early as possible.
-    if not module.params["mon_ip"]:
+    if not m.params["mon_ip"]:
         r["rc"] = 1
         r["msg"] = (
             "'mon_ip' cannot be an empty string.  Please use the IP",
@@ -66,7 +66,7 @@ def bootstrap(r, module):
         r["command"] = "%s --skip-monitoring-stack" % r["command"]
 
     # Run the command, catching any stdout/stderr
-    r["rc"], r["stdout"], r["stderr"] = module.run_command(r["command"], check_rc=False)
+    r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
 
     if r["rc"] > 0:
         r["changed"] = True
@@ -116,6 +116,8 @@ def main():
         "stderr": "",
         "stdout": "",
     }
+
+    result = bootstrap(result, module)
 
     if result["rc"] > 0:
         module.fail_json(**result)
