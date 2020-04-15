@@ -11,14 +11,16 @@
   register: cephadm_check_ceph_conf
 
 - name: Bootstrap Ceph
-  command: >-
-    cephadm bootstrap
-    --allow-fqdn-hostname
-    --skip-dashboard
-    {{ "--skip-firewalld" if cephadm_firewall_firewalld == 'False' }}
-    --skip-mon-network
-    --skip-monitoring-stack
-    --mon-ip {{ ansible_facts[cephadm_network_interface_public][cephadm_network_ip_version].address }}
+  cephadm_bootstrap:
+    mon_ip: "{{ ansible_facts[interface][ipv].address }}"
+    allow_fqdn_hostname: true
+    skip_dashboard: true
+    skip_firewalld: true
+    skip_mon_network: true
+    skip_monitoring_stack: true
+  vars:
+    ipv: "{{ cephadm_network_ip_version }}"
+    interface: "{{ cephadm_network_interface_public }}"
   when: not cephadm_check_ceph_conf.stat.exists
 
 - name: Show output of 'ceph status' for debugging, if needed
