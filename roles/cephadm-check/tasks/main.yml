@@ -19,13 +19,15 @@
       for more information.
   failed_when: >-
     ansible_distribution not in targets.keys()
-    or ansible_distribution_release not in releases
+    or ansible_distribution_release not in versions
+    or (ansible_os_family == "RedHat"
+    and ansible_distribution_major_version not in versions)
   vars:
     targets:
       CentOS: ["8"]
       Debian: ["buster"]
       Ubuntu: ["bionic"]
-    releases: "{{ targets[ansible_distribution] }}"
+    versions: "{{ targets[ansible_distribution] }}"
 
 - name: Set defined variables as facts
   include: facts.yml
