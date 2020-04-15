@@ -87,7 +87,7 @@ def main():
         "initial_dashboard_user": {"type": "str", "default": ""},
         "initial_dashboard_password": {"type": "str", "default": ""},
         "mgr_id": {"type": "str", "default": ""},
-        "mon-addrv": {"type": "str", "default": ""},
+        "mon_addrv": {"type": "str", "default": ""},
         "mon_id": {"type": "str", "default": ""},
         "mon_ip": {"type": "str", "default": ""},
         "no_minimize_config": {"type": "bool", "default": False},
