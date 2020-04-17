@@ -21,93 +21,105 @@ def bootstrap(r, m):
         )
         return r
     else:
-        r["command"] = "%s --mon-ip %s" & (r["command"], r["mon_ip"])
+        r["command"] = "%s --mon-ip %s" & (r["command"], m.params["mon_ip"])
 
-    if r["allow_fqdn_hostname"]:
+    if m.params["allow_fqdn_hostname"]:
         r["command"] = "%s --allow-fqdn-hostname" % r["command"]
 
-    if r["allow_overwrite"]:
+    if m.params["allow_overwrite"]:
         r["command"] = "%s --allow-overwrite" % r["command"]
 
-    if r["config"]:
-        r["command"] = "%s --config %s" % (r["command"], r["config"])
+    if m.params["config"]:
+        r["command"] = "%s --config %s" % (r["command"], m.params["config"])
 
-    if r["fsid"]:
-        r["command"] = "%s --fsid %s" % (r["command"], r["fsid"])
+    if m.params["fsid"]:
+        r["command"] = "%s --fsid %s" % (r["command"], m.params["fsid"])
 
-    if r["mgr_id"]:
-        r["command"] = "%s --mgr-id %s" % (r["command"], r["mgr_id"])
+    if m.params["mgr_id"]:
+        r["command"] = "%s --mgr-id %s" % (r["command"], m.params["mgr_id"])
 
-    if r["mon_addrv"]:
-        r["command"] = "%s --mon-addrv %s" % (r["command"], r["mon_addrv"])
+    if m.params["mon_addrv"]:
+        r["command"] = "%s --mon-addrv %s" % (r["command"], m.params["mon_addrv"])
 
-    if r["mon_id"]:
-        r["command"] = "%s --mon-id %s" % (r["command"], r["mon_id"])
+    if m.params["mon_id"]:
+        r["command"] = "%s --mon-id %s" % (r["command"], m.params["mon_id"])
 
-    if r["no_minimize_config"]:
+    if m.params["no_minimize_config"]:
         r["command"] = "%s --no-minimize-config" % r["command"]
 
-    if r["orphan_initial_daemons"]:
+    if m.params["orphan_initial_daemons"]:
         r["command"] = "%s --orphan-initial-daemons" % r["command"]
 
-    if r["output_config"]:
-        r["command"] = "%s --output-config %s" % (r["command"], r["output_config"])
-
-    if r["output_dir"]:
-        r["command"] = "%s --output-dir %s" % (r["command"], r["output_dir"])
-
-    if r["output_keyring"]:
-        r["command"] = "%s --output-keyring %s" % (r["command"], r["output_keyring"])
-
-    if r["output_pub_ssh_key"]:
-        r["command"] = "%s --output-pub-ssh-key %s" % (
+    if m.params["output_config"]:
+        r["command"] = "%s --output-config %s" % (
             r["command"],
-            r["output_pub_ssh_key"],
+            m.params["output_config"],
         )
 
-    if r["skip_dashboard"]:
+    if m.params["output_dir"]:
+        r["command"] = "%s --output-dir %s" % (r["command"], m.params["output_dir"])
+
+    if m.params["output_keyring"]:
+        r["command"] = "%s --output-keyring %s" % (
+            r["command"],
+            m.params["output_keyring"],
+        )
+
+    if m.params["output_pub_ssh_key"]:
+        r["command"] = "%s --output-pub-ssh-key %s" % (
+            r["command"],
+            m.params["output_pub_ssh_key"],
+        )
+
+    if m.params["skip_dashboard"]:
         r["command"] = "%s --skip-dashboard" % r["command"]
     else:
-        if r["dashboard_crt"]:
-            r["command"] = "%s --dashboard-crt %s" % (r["command"], r["dashboard_crt"])
+        if m.params["dashboard_crt"]:
+            r["command"] = "%s --dashboard-crt %s" % (
+                r["command"],
+                m.params["dashboard_crt"],
+            )
 
-        if r["dashboard_key"]:
-            r["command"] = "%s --dashboard-key %s" % (r["command"], r["dashboard_key"])
+        if m.params["dashboard_key"]:
+            r["command"] = "%s --dashboard-key %s" % (
+                r["command"],
+                m.params["dashboard_key"],
+            )
 
-        if r["dashboard_password_noupdate"]:
+        if m.params["dashboard_password_noupdate"]:
             r["command"] = "%s --dashboard-password-noupdate" % (r["command"])
 
-        if r["initial_dashboard_user"]:
+        if m.params["initial_dashboard_user"]:
             r["command"] = "%s --initial-dashboard-user %s" % (
                 r["command"],
-                r["initial_dashboard_user"],
+                m.params["initial_dashboard_user"],
             )
 
-        if r["initial_dashboard_password"]:
+        if m.params["initial_dashboard_password"]:
             r["command"] = "%s --initial-dashboard-password %s" % (
                 r["command"],
-                r["initial_dashboard_password"],
+                m.params["initial_dashboard_password"],
             )
 
-    if r["skip_firewalld"]:
+    if m.params["skip_firewalld"]:
         r["command"] = "%s --skip-firwalld" % r["command"]
 
-    if r["skip_mon_network"]:
+    if m.params["skip_mon_network"]:
         r["command"] = "%s --skip-mon-network" % r["command"]
 
-    if r["skip_monitoring_stack"]:
+    if m.params["skip_monitoring_stack"]:
         r["command"] = "%s --skip-monitoring-stack" % r["command"]
 
-    if r["skip_ping_check"]:
+    if m.params["skip_ping_check"]:
         r["command"] = "%s --skip-ping-check" % r["command"]
 
-    if r["skip_prepare_host"]:
+    if m.params["skip_prepare_host"]:
         r["command"] = "%s --skip-prepare-host" % r["command"]
 
-    if r["skip_pull"]:
+    if m.params["skip_pull"]:
         r["command"] = "%s --skip-pull" % r["command"]
 
-    if r["skip_ssh"]:
+    if m.params["skip_ssh"]:
         r["command"] = "%s --skip-ssh" % r["command"]
 
     # Run the command, catching any stdout/stderr
@@ -135,7 +147,7 @@ def main():
             "mgr_id": {"type": "str", "default": ""},
             "mon_addrv": {"type": "str", "default": ""},
             "mon_id": {"type": "str", "default": ""},
-            "mon_ip": {"type": "str", "default": ""},
+            "mon_ip": {"type": "str", "required": True},
             "no_minimize_config": {"type": "bool", "default": False},
             "orphan_initial_daemons": {"type": "bool", "default": False},
             "output_config": {"type": "str", "default": ""},
@@ -158,7 +170,6 @@ def main():
             ["skip_dashboard", "initial_dashboard_user"],
             ["skip_dashboard", "initial_dashboard_password"],
         ],
-        required_one_of=[["mon_ip"]],
     )
 
     result = {
