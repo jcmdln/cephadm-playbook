@@ -12,24 +12,13 @@
 
 - name: Bootstrap Ceph
   cephadm_bootstrap:
-    mon_ip: "{{ ansible_facts[interface][ipv].address }}"
+    mon_ip: "{{ target.address }}"
     allow_fqdn_hostname: true
-    skip_dashboard: true
-    skip_firewalld: true
-    skip_mon_network: true
-    skip_monitoring_stack: true
   vars:
     ipv: "{{ cephadm_network_ip_version }}"
     interface: "{{ cephadm_network_interface_public }}"
+    target: "{{ ansible_facts[interface][ipv] }}"
   when: not cephadm_check_ceph_conf.stat.exists
-
-- name: Show output of 'ceph status' for debugging, if needed
-  command: >-
-    ceph status
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
 
 - name: Add cephadm pubkey to all other hosts
   shell: >-
@@ -44,28 +33,30 @@
   when: (cephadm_hosts | length) > 0
   with_items: "{{ cephadm_hosts | difference(inventory_hostname) }}"
 
-- name: Enable 'cephadm' orchestrator module
+- name: Set host addr in Orchestrator
   command: >-
-    ceph mgr module enable cephadm
+    ceph orch host set-addr {{ ansible_hostname }} {{ target.address }}
   changed_when:
     - result.rc is defined
     - result.rc > 0
   register: result
-
-- name: Use 'cephadm' as orchestrator backend
-  command: >-
-    ceph orch set backend cephadm
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
+  vars:
+    host: "{{ inventory_hostname }}"
+    interface: "{{ cephadm_network_interface_cluster }}"
+    ipv: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[host]['ansible_' + interface][ipv] }}"
 
 - name: Add other hosts to the cluster
   command: >-
-    ceph orch host add {{ item }}
+    ceph orch host add {{ hostname }} {{ target.address }}
   changed_when:
     - result.rc is defined
     - result.rc > 0
   register: result
+  vars:
+    hostname: "{{ hostvars[item]['ansible_hostname'] }}"
+    interface: "{{ cephadm_network_interface_cluster }}"
+    ipv: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item]['ansible_' + interface][ipv] }}"
   when: (cephadm_hosts | length) > 0
   with_items: "{{ cephadm_hosts | difference(inventory_hostname) }}"
