@@ -14,6 +14,7 @@
   cephadm_bootstrap:
     mon_ip: "{{ target.address }}"
     allow_fqdn_hostname: true
+    skip_dashboard: true
   vars:
     ipv: "{{ cephadm_network_ip_version }}"
     interface: "{{ cephadm_network_interface_public }}"
