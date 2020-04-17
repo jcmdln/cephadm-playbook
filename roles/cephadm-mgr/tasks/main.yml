@@ -1,30 +1,21 @@
 # main.yml
 
-- name: Disable automated mgr deployment
+- name: Label mgr(s) hosts
   command: >-
-    ceph orch apply mgr --unmanaged
+    ceph orch host label add {{ hostname }} mgr
   changed_when:
     - result.rc is defined
     - result.rc > 0
   register: result
-
-- name: Add "mgr" label to defined hosts
-  command: >-
-    ceph orch host label add {{ item }} mgr
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
-  with_items:
-    - "{{ cephadm_hosts_mgrs | difference(inventory_hostname) }}"
-
-- name: Add managers
-  command: >-
-    ceph orch daemon add mgr {{ item }}:{{ ip_addr }}
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
   vars:
-    ip_addr: "{{ hostvars[item]['ansible_' + cephadm_network_interface_mgrs][cephadm_network_ip_version].address }}"
+    hostname: "{{ hostvars[item]['ansible_hostname'] }}"
   with_items:
-    - "{{ cephadm_hosts_mgrs | difference(inventory_hostname) }}"
+    - "{{ cephadm_hosts_mgrs }}"
+
+- name: Add mgr(s)
+  command: >-
+    ceph orch apply mgr label:mgr
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
