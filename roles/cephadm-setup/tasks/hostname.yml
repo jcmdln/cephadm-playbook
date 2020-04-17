@@ -1,5 +1,0 @@
-# hostname.yml
-
-- name: Set hostname to match inventory
-  hostname:
-    name: "{{ inventory_hostname }}"
