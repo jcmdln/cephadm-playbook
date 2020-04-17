@@ -21,25 +21,25 @@
   copy:
     src: /tmp/{{ item }}
     dest: ~/.ssh/{{ item }}
-    owner: root
     group: root
     mode: "0600"
+    owner: root
   with_items:
     - cephadm_rsa
     - cephadm_rsa.pub
 
-- name: Set authorized key in alternate location
+- name: Authorize the SSH keypair on all hosts
   authorized_key:
-    user: root
     key: "{{ cephadm_pubkey.stdout_lines[0] }}"
+    user: root
     state: present
 
 - name: Add ~/.ssh/config referencing all other hosts
   blockinfile:
     block: |
       {% for host in cephadm_hosts | difference(inventory_hostname) %}
-      Host {{ host }}
-        HostName {{ hostvars[host]['ansible_' + interface][ipver].address }}
+      Host {{ hostname }}
+        HostName {{ target.address }}
         IdentityFile ~/.ssh/ceph_rsa
         PreferredAuthentications publickey
         User root
@@ -50,5 +50,7 @@
     create: true
     dest: ~/.ssh/config
   vars:
+    hostname: "{{ hostvars[host]['ansible_hostname'] }}"
     interface: "{{ cephadm_network_interface_cluster }}"
-    ipver: "{{ cephadm_network_ip_version }}"
+    ipv: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[host]['ansible_' + interface][ipv] }}"
