@@ -1,31 +1,21 @@
 # main.yml
 
-- name: Disable automated mon deployment
+- name: Label mon(s) hosts
   command: >-
-    ceph orch apply mon --unmanaged
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
-
-- name: Add "mon" label to defined hosts
-  command: >-
-    ceph orch host label add {{ item }} mon
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
-  with_items:
-    - "{{ cephadm_hosts_mons | difference(inventory_hostname) }}"
-
-- name: Add monitors
-  command: >-
-    ceph orch daemon add mon {{ item }}:{{ ip_addr }}
+    ceph orch host label add {{ hostname }} mon
   changed_when:
     - result.rc is defined
     - result.rc > 0
   register: result
   vars:
-    ip_addr: "{{ hostvars[item]['ansible_' + cephadm_network_interface_mons][cephadm_network_ip_version].address }}"
+    hostname: "{{ hostvars[item]['ansible_hostname'] }}"
   with_items:
-    - "{{ cephadm_hosts_mons | difference(inventory_hostname) }}"
+    - "{{ cephadm_hosts_mons }}"
+
+- name: Add mon(s)
+  command: >-
+    ceph orch apply mon label:mons
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
