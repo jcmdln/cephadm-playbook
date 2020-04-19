@@ -23,7 +23,7 @@
       tags: [bootstrap]
 
     - role: cephadm-dashboard
-      tags: [dashboard]
+      tags: [dashboard, dashboards]
 
     - role: cephadm-mon
       tags: [mon, mons]
@@ -33,3 +33,6 @@
 
     - role: cephadm-osd
       tags: [never, osd, osds]
+
+    - role: cephadm-rgw
+      tags: [never, rgw, rgws]
