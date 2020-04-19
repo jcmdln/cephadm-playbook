@@ -1,8 +1,5 @@
 # main.yml
 
-- include: hostname.yml
-  tags: [setup-hostname]
-
 - include: ntp.yml
   tags: [setup-ntp]
 
