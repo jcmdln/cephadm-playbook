@@ -124,6 +124,7 @@ def main():
             ["allow_ptrace", "force"],
             ["allow_ptrace", "force_delete_data"],
         ],
+        required_if=[["name", "osd", ["osd_fsid"]]],
     )
 
     result = {
