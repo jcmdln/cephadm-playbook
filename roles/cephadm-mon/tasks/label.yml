@@ -1,0 +1,11 @@
+- name: Label mon(s) hosts
+  command: >-
+    ceph orch host label add {{ hostname }} mon
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+  vars:
+    hostname: "{{ hostvars[item]['ansible_hostname'] }}"
+  with_items:
+    - "{{ cephadm_hosts_mons }}"

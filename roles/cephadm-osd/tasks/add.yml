@@ -1,0 +1,7 @@
+- name: Add osd(s)
+  command: >-
+    ceph orch apply osd --all-available-devices
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result

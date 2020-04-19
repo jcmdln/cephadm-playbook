@@ -1,11 +1,7 @@
 # main.yml
 
-- name: Add "osd" label to defined hosts
-  command: >-
-    ceph orch host label add {{ item }} osd
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
-  with_items:
-    - "{{ cephadm_hosts_mons | difference(inventory_hostname) }}"
+- include: label.yml
+  tags: [osd-label, osds-label]
+
+- include: add.yml
+  tags: [osd-add, osds-add]
