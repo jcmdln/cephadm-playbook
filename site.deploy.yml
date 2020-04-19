@@ -7,7 +7,7 @@
 
   roles:
     - role: cephadm-check
-      tags: [always, check]
+      tags: [always, check, checks]
 
     - role: cephadm-setup
       tags: [setup]
