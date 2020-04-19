@@ -1,8 +1,0 @@
-# requirements.dev.txt
-
--r requirements.txt
-
-black>=19.10b0,<20
-docker>=4.1.0,<5
-flake8>=3.7.9,<4
-molecule>=3.0,<4
