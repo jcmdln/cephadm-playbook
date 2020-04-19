@@ -52,7 +52,7 @@ Setup
     Make a copy of `inventory.sample.yml`:
 
     ```sh
-    $ cp inventory{.sample,}.yml
+    $ cp {sample.,}inventory.yml
     ```
 
     Read over the created `inventory.yml` and add your hosts as outlined
