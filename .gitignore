@@ -11,7 +11,7 @@
 !Dockerfile
 !requirements*.txt
 !sample.*.yml
-!site.*.yml
+!site.yml
 
 # Directories
 !library/**
