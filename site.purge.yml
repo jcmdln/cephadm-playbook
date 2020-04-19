@@ -38,28 +38,20 @@
   tasks:
     - name: Destroy a cluster
       command: >-
-        cephadm shell -- ceph rm-cluster --force
-        {{ cephadm_cluster_fsid }}
+        cephadm rm-cluster
+        --fsid {{ cephadm_cluster_fsid }}
+        --force
       failed_when: false
-      register: result
-
-    - name: Cleanup vgs
-      command: >-
-        vgremove -y ceph-*
-      failed_when: false
-      register: result
 
     - name: Stop all running docker containers
       shell: >-
         docker ps | grep -v grep | grep -i ceph | awk '{print $1}' | xargs docker stop
       failed_when: false
-      register: result
 
     - name: Docker system prune
       command: >-
         docker system prune -af
       failed_when: false
-      register: result
 
     - name: Delete Ceph directories
       file:
