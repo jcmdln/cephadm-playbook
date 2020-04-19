@@ -1,0 +1,54 @@
+# main.yml
+
+- name: Label rgw(s) hosts
+  command: >-
+    ceph orch host label add {{ item }} rgw
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+  with_items:
+    - "{{ cephadm_hosts_rgws | difference(inventory_hostname) }}"
+
+- name: Create rgw realm
+  command: >-
+    radosgw-admin realm create
+    --rgw-realm="{{ cephadm_rgw_realm }}"
+    --default
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Create rgw zonegroup
+  command: >-
+    radosgw-admin zonegroup create
+    --rgw-zonegroup="{{ cephadm_rgw_zonegroup }}"
+    --master
+    --default
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Create rgw zone
+  command: >-
+    radosgw-admin zone create
+    --rgw-zone="{{ cephadm_rgw_zone }}"
+    --rgw-zonegroup="{{ cephadm_rgw_zonegroup }}"
+    --master
+    --default
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+
+- name: Add rgw(s)
+  command: >-
+    ceph orch apply rgw {{ cephadm_rgw_realm }} {{ cephadm_rgw_zone }}
+    {{ cephadm_hosts_rgws | length }}
+    {{ cephadm_hosts_rgws }}
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
