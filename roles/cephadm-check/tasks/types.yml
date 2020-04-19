@@ -5,22 +5,13 @@
 # cephadm_conf
 #
 
-- name: check if var 'cephadm_conf' is type 'mapping'
+- name: check if var 'cephadm_config' is type 'mapping'
   fail:
     msg: >-
-      Invalid value for variable 'cephadm_conf':
-      {{ cephadm_conf }}
+      Invalid value for variable 'cephadm_config':
+      {{ cephadm_config }}
   failed_when: >-
-    cephadm_conf is not mapping
-
-- name: check if 'cephadm_conf_commands' is type 'iterable'
-  fail:
-    msg: >-
-      Invalid value for variable 'cephadm_conf_commands':
-      {{ cephadm_conf_commands }}
-  failed_when: >-
-    cephadm_conf_commands is not iterable
-    or cephadm_conf_commands is string
+    cephadm_config is not mapping
 
 #
 # cephadm_dashboard
@@ -114,35 +105,9 @@
   failed_when: >-
     cephadm_network_interface_rgws is not string
 
-- name: check if 'cephadm_network_vip_cluster' is type 'string'
-  fail:
-    msg: >-
-      Invalid value for variable 'cephadm_network_vip_cluster':
-      {{ cephadm_network_vip_cluster }}
-  failed_when: >-
-    cephadm_network_vip_public is not string
-    and cephadm_network_vip_public is iterable
-
-- name: check if 'cephadm_network_vip_public' is type 'iterable'
-  fail:
-    msg: >-
-      Invalid value for variable 'cephadm_network_vip_public':
-      {{ cephadm_network_vip_public }}
-  failed_when: >-
-    cephadm_network_vip_public is not string
-    and cephadm_network_vip_public is iterable
-
 #
 # cephadm_osd
 #
-
-- name: check if 'cephadm_osd_cpus' is type 'number'
-  fail:
-    msg: >-
-      Invalid value for variable 'cephadm_osd_cpus':
-      {{ cephadm_osd_cpus }}
-  failed_when: >-
-    cephadm_osd_cpus | int < 1
 
 - name: check if 'cephadm_osd_drivegroups' is type 'mapping'
   fail:
@@ -152,34 +117,30 @@
   failed_when: >-
     cephadm_osd_drivegroups is not mapping
 
-- name: check if 'cephadm_osd_memory' is type 'number'
-  fail:
-    msg: >-
-      Invalid value for variable 'cephadm_osd_memory':
-      {{ cephadm_osd_memory | filesizeformat(true) }}
-  failed_when: >-
-    cephadm_osd_memory | int < 1
+#
+# cephadm_rgw
+#
 
-- name: check if 'cephadm_osd_per_hdd' is type 'number'
+- name: check if 'cephadm_rgw_realm' is type 'string'
   fail:
     msg: >-
-      Invalid value for variable 'cephadm_osd_per_hdd':
-      {{ cephadm_osd_per_hdd }}
+      Invalid value for variable 'cephadm_rgw_realm':
+      {{ cephadm_rgw_realm }}
   failed_when: >-
-    cephadm_osd_per_hdd | int < 1
+    cephadm_rgw_realm is not string
 
-- name: check if 'cephadm_osd_per_nvme' is type 'number'
+- name: check if 'cephadm_rgw_zone' is type 'string'
   fail:
     msg: >-
-      Invalid value for variable 'cephadm_osd_per_nvme':
-      {{ cephadm_osd_per_nvme }}
+      Invalid value for variable 'cephadm_rgw_zone':
+      {{ cephadm_rgw_zone }}
   failed_when: >-
-    cephadm_osd_per_nvme | int < 1
+    cephadm_rgw_zone is not string
 
-- name: check if 'cephadm_osd_per_ssd' is type 'number'
+- name: check if 'cephadm_rgw_zonegroup' is type 'string'
   fail:
     msg: >-
-      Invalid value for variable 'cephadm_osd_per_ssd':
-      {{ cephadm_osd_per_ssd }}
+      Invalid value for variable 'cephadm_rgw_zonegroup':
+      {{ cephadm_rgw_zonegroup }}
   failed_when: >-
-    cephadm_osd_per_ssd | int < 1
+    cephadm_rgw_zonegroup is not string

@@ -44,23 +44,27 @@
       {{ host }}{% if not loop.last %},{% endif -%}
       {% endfor %}
 
-- name: Set cephadm configuration facts
+- name: Set conf facts
   set_fact:
-    cephadm_conf: >-
-      {{ cephadm_conf | default({}) }}
-    cephadm_conf_commands: >-
-      {{ cephadm_conf_commands | default([]) }}
+    cephadm_config: >-
+      {{ cephadm_config | default({}) }}
 
+- name: Set dashboard facts
+  set_fact:
     cephadm_dashboard: >-
-      {{ cephadm_dashboard | default(true) }}
+      {{ cephadm_dashboard | default(True) }}
     cephadm_dashboard_password: >-
       {{ cephadm_dashboard_password | default('admin') }}
     cephadm_dashboard_username: >-
       {{ cephadm_dashboard_username | default('admin') }}
 
+- name: Set firewall facts
+  set_fact:
     cephadm_firewall_firewalld: >-
-      {{ cephadm_firewall_firewalld | default(true) }}
+      {{ cephadm_firewall_firewalld | default(True) }}
 
+- name: Set network facts
+  set_fact:
     cephadm_network_interface_cluster: >-
       {{ cephadm_network_interface_cluster | default('') }}
     cephadm_network_interface_public: >-
@@ -74,6 +78,8 @@
     cephadm_network_interface_rgws: >-
       {{ cephadm_network_interface_rgws | default(cephadm_network_interface_public) }}
 
+- name: Set additional network facts
+  set_fact:
     cephadm_network_interfaces:
       - "{{ cephadm_network_interface_cluster }}"
       - "{{ cephadm_network_interface_public }}"
@@ -82,22 +88,16 @@
       - "{{ cephadm_network_interface_osds }}"
       - "{{ cephadm_network_interface_rgws }}"
 
-    cephadm_network_vip_cluster: >-
-      {{ cephadm_network_vip_cluster | default('') }}
-    cephadm_network_vip_public: >-
-      {{ cephadm_network_vip_public | default('') }}
-
-    cephadm_osd_cpus: >-
-      {{ cephadm_osd_cpus | default(1) }}
+- name: Set OSD facts
+  set_fact:
     cephadm_osd_drivegroups: >-
       {{ cephadm_osd_drivegroups | default({}) }}
-    cephadm_osd_memory: >-
-      {{ (cephadm_osd_memory | human_to_bytes)
-      if cephadm_osd_memory is defined
-      else ('1 GB' | human_to_bytes) }}
-    cephadm_osd_per_hdd: >-
-      {{ cephadm_osd_per_hdd | default(1) }}
-    cephadm_osd_per_nvme: >-
-      {{ cephadm_osd_per_nvme | default(4) }}
-    cephadm_osd_per_ssd: >-
-      {{ cephadm_osd_per_ssd | default(2) }}
+
+- name: Set RGW facts
+  set_fact:
+    cephadm_rgw_realm: >-
+      {{ cephadm_rgw_realm | default('ceph') }}
+    cephadm_rgw_zone: >-
+      {{ cephadm_rgw_zone | default('use-east-1') }}
+    cephadm_rgw_zonegroup: >-
+      {{ cephadm_rgw_zone | default('default') }}
