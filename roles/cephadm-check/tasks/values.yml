@@ -1,37 +1,25 @@
 # values.yml
 
-- name: check if defined network interfaces exist
+- name: check if cephadm_network_interfaces exist
   fail:
     msg: "The interface {{ item }} does not exist"
   failed_when: item not in ansible_facts.interfaces
-  vars:
-    interfaces:
-      - "{{ cephadm_network_interface_cluster }}"
-      - "{{ cephadm_network_interface_public }}"
-      - "{{ cephadm_network_interface_mgrs }}"
-      - "{{ cephadm_network_interface_mons }}"
-      - "{{ cephadm_network_interface_osds }}"
-      - "{{ cephadm_network_interface_rgws }}"
-  with_items: "{{ interfaces | unique }}"
+  with_items: "{{ cephadm_network_interfaces | unique }}"
 
-- name: check if all Cluster Network interfaces are reachable
+- name: check if cephadm_network_interfaces are reachable
   command: >-
     ping -c 1 "{{ target.address }}"
-  changed_when: false
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
   vars:
-    interface: "{{ cephadm_network_interface_cluster }}"
-    interfaces:
-      - "{{ cephadm_network_interface_cluster }}"
-      - "{{ cephadm_network_interface_public }}"
-      - "{{ cephadm_network_interface_mgrs }}"
-      - "{{ cephadm_network_interface_mons }}"
-      - "{{ cephadm_network_interface_osds }}"
-      - "{{ cephadm_network_interface_rgws }}"
+    interface: "{{ item[1] }}"
     ipver: "{{ cephadm_network_ip_version }}"
     target: "{{ hostvars[item[0]]['ansible_' + interface][ipver] }}"
   with_nested:
     - "{{ cephadm_hosts }}"
-    - "{{ interfaces | unique }}"
+    - "{{ cephadm_network_interfaces | unique }}"
 
 - name: check if cephadm_osd_drivegroups is defined and populated
   fail:
