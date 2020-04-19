@@ -10,7 +10,7 @@
 !.gitignore
 !Dockerfile
 !requirements*.txt
-!*.sample.yml
+!sample.*.yml
 !site.*.yml
 
 # Directories
