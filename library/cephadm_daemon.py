@@ -17,26 +17,35 @@ def deploy(r, m):
     Deploy a daemon.
     """
 
-    r["command"] = "%s deploy" % r["command"]
+    r["command"] = "%s deploy %s %s" % (
+        r["command"],
+        m.params["fsid"],
+        m.params["name"],
+    )
 
-    r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
+    if m.params["name"] == "osd":
+        r["command"] = "%s --osd-fsid %s" % (r["command"], m.params["osd_fsid"])
 
-    if r["rc"] > 0:
-        r["changed"] = True
-        r["msg"] = "received a non-zero exit code"
+    if m.params["config"]:
+        r["command"] = "%s --config %s" % (r["command"], m.params["config"])
 
-    return r
+    if m.params["config_json"]:
+        r["command"] = "%s --config-json %s" % (r["command"], m.params["config_json"])
 
+    if m.params["key"]:
+        r["command"] = "%s --key %s" % (r["command"], m.params["key"])
 
-def ls(r, m):
-    """
-    List daemon(s).
-    """
+    if m.params["keyring"]:
+        r["command"] = "%s --keyring %s" % (r["command"], m.params["keyring"])
 
-    r["command"] = "%s ls" % r["command"]
+    if m.params["allow_ptrace"]:
+        r["command"] = "%s --allow-ptrace" % r["command"]
 
-    if m.params["no_detail"]:
-        r["command"] = "%s --no-detail" % r["command"]
+    if m.params["reconfig"]:
+        r["command"] = "%s --reconfig" % r["command"]
+
+    if m.params["skip_firewalld"]:
+        r["command"] = "%s --skip-firewalld" % r["command"]
 
     r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
 
@@ -52,23 +61,17 @@ def rm_daemon(r, m):
     Remove a daemon.
     """
 
-    r["command"] = "%s rm-daemon" % r["command"]
+    r["command"] = "%s rm-daemon %s %s" % (
+        r["command"],
+        m.params["fsid"],
+        m.params["name"],
+    )
 
-    r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
+    if m.params["force"]:
+        r["command"] = "%s --force" % r["command"]
 
-    if r["rc"] > 0:
-        r["changed"] = True
-        r["msg"] = "received a non-zero exit code"
-
-    return r
-
-
-def rm_cluster(r, m):
-    """
-    Remove all daemons.
-    """
-
-    r["command"] = "%s rm-cluster" % r["command"]
+    if m.params["force_delete_data"]:
+        r["command"] = "%s --force-delete-data" % r["command"]
 
     r["rc"], r["stdout"], r["stderr"] = m.run_command(r["command"], check_rc=False)
 
@@ -87,38 +90,40 @@ def main():
             "config_json": {"type": "mapping", "default": ""},
             "force": {"type": "bool", "default": False},
             "force_delete_data": {"type": "bool", "default": False},
-            "fsid": {"type": "str", "default": ""},
+            "fsid": {"type": "str", "required": True},
             "key": {"type": "str", "default": ""},
             "keyring": {"type": "str", "default": ""},
-            "list": {"type": "bool", "default": False},
             "name": {
                 "type": "str",
-                "choices": ["*", "grafana", "mgr", "mon", "osd", "prometheus"],
+                "choices": [
+                    "alertmanager",
+                    "crash",
+                    "grafana",
+                    "iscsi",
+                    "mgr",
+                    "mon",
+                    "nfs",
+                    "node-exporter",
+                    "osd",
+                    "prometheus",
+                    "rbd-mirror",
+                    "rgw",
+                ],
+                "required": True,
             },
-            "no_detail": {"type": "bool", "default": False},
             "osd_fsid": {"type": "str", "default": ""},
             "reconfig": {"type": "bool", "default": False},
             "skip_firewalld": {"type": "bool", "default": False},
-            "state": {"type": "str", "choices": ["absent", "present"],},
+            "state": {
+                "type": "str",
+                "choices": ["absent", "present"],
+                "required": True,
+            },
         },
         mutually_exclusive=[
             ["allow_ptrace", "force"],
             ["allow_ptrace", "force_delete_data"],
-            ["allow_ptrace", "force"],
-            ["allow_ptrace", "force_delete_data"],
-            ["allow_ptrace", "list", "fsid"],
-            ["allow_ptrace", "list", "name"],
-            ["allow_ptrace", "list", "reconfig"],
-            ["allow_ptrace", "list", "skip_firewalld"],
-            ["allow_ptrace", "list", "state"],
-            ["allow_ptrace", "no_detail", "fsid"],
-            ["allow_ptrace", "no_detail", "name"],
-            ["allow_ptrace", "no_detail", "reconfig"],
-            ["allow_ptrace", "no_detail", "skip_firewalld"],
-            ["allow_ptrace", "no_detail", "state"],
         ],
-        required_if=[["state", "absent", ["fsid"]], ["state", "present", ["fsid"]]],
-        required_one_of=[["list", "state"]],
     )
 
     result = {
@@ -131,16 +136,9 @@ def main():
     }
 
     if module.params["state"] == "absent":
-        if module.params["name"] == "*":
-            result = rm_cluster(result, module)
-        else:
-            result = rm_daemon(result, module)
-
-    if module.params["state"] == "present":
+        result = rm_daemon(result, module)
+    else:
         result = deploy(result, module)
-
-    if module.params["list"]:
-        result = ls(result, module)
 
     if result["rc"] > 0:
         module.fail_json(**result)
