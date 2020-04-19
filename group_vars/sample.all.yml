@@ -5,6 +5,33 @@
 ##
 
 #
+# Config
+#
+
+# TODO: Clarify how this works, probably with big warning notices
+cephadm_config:
+  # Stage to run _AFTER_
+  bootstrap:
+    # ceph osd
+    osd:
+      # ceph osd erasure-code-profile set
+      erasure-code-profile:
+        # ceph osd erasure-code-profile set host-jerasure-3-2 ...
+        - name: host-jerasure-3-2
+          crush_failure_domain: host
+          plugin: jerasure
+          k: 3
+          m: 2
+
+        # ceph osd erasure-code-profile set rack-isa-8-3 ...
+        - name: rack-isa-8-3
+          crush_failure_domain: rack
+          plugin: isa
+          technique: reed_sol_van
+          k: 8
+          m: 3
+
+#
 # Dashboard
 #
 
@@ -61,17 +88,10 @@ cephadm_host_services:
   - docker
 
 #
-# Mgr
-#
-
-# k,v for configuration changes to make
-cephadm_mgr_conf: {}
-
-#
 # Mon
 #
 
-# I don't remember what this is for, I think it was just a placeholder
+# Placeholder
 cephadm_mon: ""
 
 #
@@ -97,10 +117,6 @@ cephadm_network_interface_rgws: "{{ cephadm_network_interface_public }}"
 # OSD
 #
 
-# Would like to restrict resource usage, but not sure how I'll handle
-# that quite yet.
-cephadm_osd_cpus: 1
-
 # https://docs.ceph.com/docs/octopus/cephadm/drivegroups/
 cephadm_osd_drivegroups:
   # group name
@@ -112,5 +128,10 @@ cephadm_osd_drivegroups:
       # a filter, saying to use all devices marked 'available'
       all: true
 
-# https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#human-to-bytes
-cephadm_osd_memory: "4 GB"
+#
+# RGW
+#
+
+cephadm_rgw_realm: ceph
+cephadm_rgw_zone: use-east-1
+cephadm_rgw_zonegroup: default
