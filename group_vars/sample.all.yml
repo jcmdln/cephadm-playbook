@@ -91,40 +91,61 @@ cephadm_mon: ""
 # Network
 #
 
-#
-# Values: ipv4, ipv6
+# 'cephadm_network_ip_version' defines whether you want to use IPv4 or
+# IPv6 in your cluster.
 cephadm_network_ip_version: ipv4
 
-# The network interface assignments you want to make.  At minimum you
-# must define your cluster interface, and the others will simply also
-# use it.
-cephadm_network_interface_cluster: eno1
+# 'cephadm_network_interface_cluster' refers to the private network
+# used by Ceph, in this case isolated to a specific network interface.
+#
+# By default we assume that the current default ipv4 interface will be
+# used for this purpose, though this is highly likely to be different
+# in production use cases.
+cephadm_network_interface_cluster: "{{ ansible_default_ipv4.interface }}"
+
+# 'cephadm_network_interface_public' refers to the public network used
+# by Ceph, in this case isolated to a specific network interface.
+#
+# By default we assume that all network traffic should simply refer to
+# the defined cluster interface, though this is highly likely to be
+# different in production use cases.
 cephadm_network_interface_public: "{{ cephadm_network_interface_cluster }}"
 
+# The following interfaces are predefined to use the canonical cluster
+# or public interfaces based on common Ceph idioms.  In some cases you
+# may wish to further isolate services, so the additional control to
+# do so is provided.
 cephadm_network_interface_mgrs: "{{ cephadm_network_interface_cluster }}"
 cephadm_network_interface_mons: "{{ cephadm_network_interface_public }}"
 cephadm_network_interface_osds: "{{ cephadm_network_interface_cluster }}"
 cephadm_network_interface_rgws: "{{ cephadm_network_interface_public }}"
 
 #
-# OSD
+# OSDs
 #
 
 # https://docs.ceph.com/docs/octopus/cephadm/drivegroups/
 cephadm_osd_drivegroups:
-  # group name
-  default:
-    # hosts to match against
-    host_pattern: "*"
-    # type of device to appy specs to
+  - service_type: osd
+    service_id: default_drive_group
+    placement:
+      host_pattern: "*"
     data_devices:
-      # a filter, saying to use all devices marked 'available'
-      all: true
+      rotational: 1
+    db_devices:
+      rotational: 0
+
+#
+# Pools
+#
+
+# placeholder
+cephadm_pools: []
 
 #
 # RGW
 #
 
-cephadm_rgw_realm: ceph
-cephadm_rgw_zone: use-east-1
+cephadm_rgw_realm: default
+cephadm_rgw_zone: default
 cephadm_rgw_zonegroup: default
