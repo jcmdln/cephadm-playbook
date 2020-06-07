@@ -1,4 +1,3 @@
----
 # cephadm-check/tasks/main.yml
 
 - name: Check if Python3 is installed
@@ -25,14 +24,9 @@
     targets:
       CentOS: ["8"]
       Debian: ["buster"]
+      Fedora: ["32"]
       Ubuntu: ["bionic"]
     versions: "{{ targets[ansible_distribution] }}"
 
 - name: Set defined variables as facts
   include: facts.yml
-
-- name: Check types of defined variables for issues
-  include: types.yml
-
-- name: Check values of defined variables for issues
-  include: values.yml

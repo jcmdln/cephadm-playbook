@@ -1,84 +1,204 @@
-# facts.yml
+# cephadm-check/tasks/facts.yml
 
 - name: Set cephadm_hosts_* facts for easy references
   set_fact:
-    cephadm_hosts: >-
-      {{ ansible_play_hosts_all | unique }}
-    cephadm_hosts_list: >-
-      {% for host in ansible_play_hosts_all | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
+    cephadm_hosts: "{{ ansible_play_hosts_all | unique }}"
+    cephadm_hosts_list: "{{ ansible_play_hosts_all | unique | list }}"
+    cephadm_hosts_mgrs: "{{ groups.mgrs | unique }}"
+    cephadm_hosts_mgrs_list: "{{ groups.mgrs | unique | list }}"
+    cephadm_hosts_mons: "{{ groups.mons | unique }}"
+    cephadm_hosts_mons_list: "{{ groups.mons | unique | list }}"
+    cephadm_hosts_osds: "{{ groups.osds | unique }}"
+    cephadm_hosts_osds_list: "{{ groups.osds | unique | list }}"
+    cephadm_hosts_rgws: "{{ groups.rgws | unique }}"
+    cephadm_hosts_rgws_list: "{{ groups.rgws | unique | list }}"
+    cephadm_hosts_rgwlbs: "{{ groups.rgwlbs | unique }}"
+    cephadm_hosts_rgwlbs_list: "{{ groups.rgwlbs | unique | list }}"
 
-    cephadm_hosts_mgrs: >-
-      {{ groups.mgrs | unique }}
-    cephadm_hosts_mgrs_list: >-
-      {% for host in groups.mgrs | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
-
-    cephadm_hosts_mons: >-
-      {{ groups.mons | unique }}
-    cephadm_hosts_mons_list: >-
-      {% for host in groups.mons | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
-
-    cephadm_hosts_osds: >-
-      {{ groups.osds | unique }}
-    cephadm_hosts_osds_list: >-
-      {% for host in groups.osds | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
-
-    cephadm_hosts_rgws: >-
-      {{ groups.rgws | unique }}
-    cephadm_hosts_rgws_list: >-
-      {% for host in groups.rgws | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
-
-    cephadm_hosts_rgwlbs: >-
-      {{ groups.rgwlbs | unique }}
-    cephadm_hosts_rgwlbs_list: >-
-      {% for host in groups.rgwlbs | unique -%}
-      {{ host }}{% if not loop.last %},{% endif -%}
-      {% endfor %}
+#
+# cephadm_conf
+#
 
 - name: Set conf facts
   set_fact:
-    cephadm_config: >-
-      {{ cephadm_config | default({}) }}
+    cephadm_config: "{{ cephadm_config | default({}) }}"
+
+- name: check 'cephadm_config'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_config': {{ cephadm_config }}
+
+      Supported types  : mapping
+      Supported values : {}  <- Too many values to list
+      Default value    : {}
+  failed_when: cephadm_config is not mapping
+
+#
+# cephadm_dashboard
+#
 
 - name: Set dashboard facts
   set_fact:
-    cephadm_dashboard: >-
-      {{ cephadm_dashboard | default(True) }}
+    cephadm_dashboard: "{{ cephadm_dashboard | default(True) }}"
     cephadm_dashboard_password: >-
       {{ cephadm_dashboard_password | default('admin') }}
     cephadm_dashboard_username: >-
       {{ cephadm_dashboard_username | default('admin') }}
+
+- name: check 'cephadm_dashboard'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_dashboard': {{ cephadm_dashboard }}
+
+      Supported types  : boolean
+      Supported values : true, false
+      Default value    : true
+  failed_when: >-
+    cephadm_dashboard is not boolean
+    or cephadm_dashboard not in [true, false]
+
+- name: check 'cephadm_dashboard_password'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_dashboard_password': {{ cephadm_dashboard_password }}
+
+      Supported types  : string
+      Supported values : Any quoted string
+      Default value    : "admin"
+  failed_when: cephadm_dashboard_password is not string
+
+- name: check 'cephadm_dashboard_username'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_dashboard_username': {{ cephadm_dashboard_username }}
+
+      Supported types  : string
+      Supported values : Any quoted string
+      Default value    : "admin"
+  failed_when: cephadm_dashboard_username is not string
+
+#
+# cephadm_firewall
+#
 
 - name: Set firewall facts
   set_fact:
     cephadm_firewall_firewalld: >-
       {{ cephadm_firewall_firewalld | default(True) }}
 
+- name: check 'cephadm_firewall_firewalld'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_firewall_firewalld': {{ cephadm_firewall_firewalld }}
+
+      Supported types  : boolean
+      Supported values : true, false
+      Default value    : true
+  failed_when: >-
+    cephadm_firewall_firewalld is not boolean
+    or cephadm_firewall_firewalld not in [true, false]
+
+#
+# cephadm_network
+#
+
 - name: Set network facts
   set_fact:
+    cephadm_network_ip_version: >-
+      {{ cephadm_network_ip_version | lower | default('ipv4')}}
     cephadm_network_interface_cluster: >-
-      {{ cephadm_network_interface_cluster | default('') }}
+      {{ cephadm_network_interface_cluster
+      | default(ansible_default_ipv4.interface) }}
     cephadm_network_interface_public: >-
-      {{ cephadm_network_interface_public | default(cephadm_network_interface_cluster) }}
+      {{ cephadm_network_interface_public
+      | default(cephadm_network_interface_cluster) }}
     cephadm_network_interface_mgrs: >-
-      {{ cephadm_network_interface_mgrs | default(cephadm_network_interface_cluster) }}
+      {{ cephadm_network_interface_mgrs
+      | default(cephadm_network_interface_cluster) }}
     cephadm_network_interface_mons: >-
-      {{ cephadm_network_interface_mons | default(cephadm_network_interface_public) }}
+      {{ cephadm_network_interface_mons
+      | default(cephadm_network_interface_public) }}
     cephadm_network_interface_osds: >-
-      {{ cephadm_network_interface_osds | default(cephadm_network_interface_cluster) }}
+      {{ cephadm_network_interface_osds
+      | default(cephadm_network_interface_cluster) }}
     cephadm_network_interface_rgws: >-
-      {{ cephadm_network_interface_rgws | default(cephadm_network_interface_public) }}
+      {{ cephadm_network_interface_rgws
+      | default(cephadm_network_interface_public) }}
 
-- name: Set additional network facts
+- name: check 'cephadm_network_ip_version'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_ip_version': {{ cephadm_network_ip_version }}
+
+      Supported types  : string
+      Supported values : "ipv4", "ipv6"
+      Default value    : "ipv4"
+  failed_when: >-
+    cephadm_network_ip_version is not string
+    or cephadm_network_ip_version not in ["ipv4", "ipv6"]
+
+- name: check 'cephadm_network_interface_cluster'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_cluster': {{ cephadm_network_interface_cluster }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ ansible_default_ipv4.interface }}"
+  failed_when: cephadm_network_interface_cluster is not string
+
+- name: check 'cephadm_network_interface_public'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_public': {{ cephadm_network_interface_public }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ cephadm_network_interface_cluster }}"
+  failed_when: cephadm_network_interface_public is not string
+
+- name: check 'cephadm_network_interface_mgrs'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_mgrs': {{ cephadm_network_interface_mgrs }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ cephadm_network_interface_cluster }}"
+  failed_when: cephadm_network_interface_mgrs is not string
+
+- name: check 'cephadm_network_interface_mons'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_mons': {{ cephadm_network_interface_mons }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ cephadm_network_interface_public }}"
+  failed_when: cephadm_network_interface_mons is not string
+
+- name: check 'cephadm_network_interface_osds'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_osds':
+      {{ cephadm_network_interface_osds }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ cephadm_network_interface_cluster }}"
+  failed_when: cephadm_network_interface_osds is not string
+
+- name: check 'cephadm_network_interface_rgws'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_network_interface_rgws': {{ cephadm_network_interface_rgws }}
+
+      Supported types  : string
+      Supported values : Any quoted network interface name
+      Default value    : "{{ cephadm_network_interface_cluster }}"
+  failed_when: cephadm_network_interface_rgws is not string
+
+- name: Set macro 'cephadm_network_interfaces' fact
   set_fact:
     cephadm_network_interfaces:
       - "{{ cephadm_network_interface_cluster }}"
@@ -88,10 +208,50 @@
       - "{{ cephadm_network_interface_osds }}"
       - "{{ cephadm_network_interface_rgws }}"
 
+- name: check if 'cephadm_network_interfaces' exist
+  fail:
+    msg: >-
+      The interface '{{ item }}' found in 'cephadm_network_interfaces'
+      does not exist.  Please review your defined network interfaces
+      for errors.
+  failed_when: item not in ansible_facts.interfaces
+  with_items: "{{ cephadm_network_interfaces | unique }}"
+
+- name: check if 'cephadm_network_interfaces' are reachable
+  command: ping -c 1 "{{ target.address }}"
+  changed_when: false
+  vars:
+    interface: "{{ item[1] }}"
+    ipver: "{{ cephadm_network_ip_version }}"
+    target: "{{ hostvars[item[0]]['ansible_' + interface][ipver] }}"
+  with_nested:
+    - "{{ cephadm_hosts }}"
+    - "{{ cephadm_network_interfaces | unique }}"
+
+#
+# cephadm_osd
+#
+
 - name: Set OSD facts
   set_fact:
     cephadm_osd_drivegroups: >-
-      {{ cephadm_osd_drivegroups | default({}) }}
+      {{ cephadm_osd_drivegroups | default([]) }}
+
+- name: check 'cephadm_osd_drivegroups'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_osd_drivegroups': {{ cephadm_osd_drivegroups }}
+
+      Supported types  : list
+      Supported values : []  <- Too many values to list
+      Default value    : []
+  failed_when: >-
+    cephadm_osd_drivegroups is not iterable
+    or cephadm_osd_drivegroups is string
+
+#
+# cephadm_rgw
+#
 
 - name: Set RGW facts
   set_fact:
@@ -101,3 +261,33 @@
       {{ cephadm_rgw_zone | default('use-east-1') }}
     cephadm_rgw_zonegroup: >-
       {{ cephadm_rgw_zone | default('default') }}
+
+- name: check 'cephadm_rgw_realm'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_rgw_realm': {{ cephadm_rgw_realm }}
+
+      Supported types  : string
+      Supported values : Any quoted string
+      Default value    : "default"
+  failed_when: cephadm_rgw_realm is not string
+
+- name: check 'cephadm_rgw_zone'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_rgw_zone': {{ cephadm_rgw_zone }}
+
+      Supported types  : string
+      Supported values : Any quoted string
+      Default value    : "default"
+  failed_when: cephadm_rgw_zone is not string
+
+- name: check 'cephadm_rgw_zonegroup'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_rgw_zonegroup': {{ cephadm_rgw_zonegroup }}
+
+      Supported types  : string
+      Supported values : Any quoted string
+      Default value    : "default"
+  failed_when: cephadm_rgw_zonegroup is not string
