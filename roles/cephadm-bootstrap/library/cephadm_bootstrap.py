@@ -21,7 +21,7 @@ def bootstrap(r, m):
         )
         return r
     else:
-        r["command"] = "%s --mon-ip %s" & (r["command"], m.params["mon_ip"])
+        r["command"] = "%s --mon-ip %s" % (r["command"], m.params["mon_ip"])
 
     if m.params["allow_fqdn_hostname"]:
         r["command"] = "%s --allow-fqdn-hostname" % r["command"]
