@@ -1,10 +1,10 @@
 ---
 # cephadm-check/tasks/main.yml
 
-- name: Install Python 3 if missing
-  package:
-    name: "python3"
-    state: present
+- name: Check if Python3 is installed
+  raw: >-
+    command -v python3
+  changed_when: false
 
 - name: Gather facts
   setup:
