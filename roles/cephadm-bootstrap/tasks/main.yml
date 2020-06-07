@@ -13,7 +13,6 @@
 - name: Bootstrap Ceph
   cephadm_bootstrap:
     mon_ip: "{{ target.address }}"
-    allow_fqdn_hostname: true
     skip_dashboard: true
     skip_monitoring_stack: true
   vars:
@@ -28,20 +27,14 @@
     -i /etc/ceph/ceph.pub
     -o 'IdentityFile ~/.ssh/cephadm_rsa'
     {{ item }}
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
+  changed_when: false
   when: (cephadm_hosts | length) > 0
   with_items: "{{ cephadm_hosts | difference(inventory_hostname) }}"
 
 - name: Set host addr in Orchestrator
   command: >-
     ceph orch host set-addr {{ ansible_hostname }} {{ target.address }}
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
+  changed_when: false
   vars:
     host: "{{ inventory_hostname }}"
     interface: "{{ cephadm_network_interface_cluster }}"
@@ -51,10 +44,7 @@
 - name: Add other hosts to the cluster
   command: >-
     ceph orch host add {{ hostname }} {{ target.address }}
-  changed_when:
-    - result.rc is defined
-    - result.rc > 0
-  register: result
+  changed_when: false
   vars:
     hostname: "{{ hostvars[item]['ansible_hostname'] }}"
     interface: "{{ cephadm_network_interface_cluster }}"
