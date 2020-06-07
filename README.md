@@ -4,7 +4,7 @@ cephadm-ansible
 
 **NOTE**: This has basically reached the point of gross scaffolding
 that kind of works.  Don't run this and expect anything positive to
-happen.
+happen, especially not in a production environment.
 
 [cephadm-ansible] is an Ansible playbook that deploys [Ceph] by
 automating the use of the new [cephadm] script.  The intention is to
@@ -32,19 +32,21 @@ Goals
 
 Usage
 ===================
-TODO: clarify this section
+This section covers how to use this process, outlining how to setup,
+configure, deploy/update, and
 
-Installation
+Setup
 -------------------
-TODO: clarify this section
 
 ```sh
+$ git clone https://github.com/jcmdln/cephadm-ansible
+$ cd cephadm-ansible
 $ virtualenv venv
 $ . venv/bin/activate
 (venv) $ pip install -r requirements.txt
 ```
 
-Setup
+Configure
 -------------------
 1. Create your inventory
 
@@ -71,23 +73,31 @@ Setup
 Deploying / Updating
 -------------------
 The process of deploying a [Ceph] cluster as well as updating it
-within the same release are the same single-step process:
+within the same release are the same process.
 
-```sh
-$ ansible-playbook -i inventory.yml site.deploy.yml
-```
+1. (Optional) Fetch the latest commits from the current branch
+
+    ```sh
+    $ git pull origin master
+    ```
+
+2. Run the playbook
+
+    ```sh
+    $ ansible-playbook -i inventory.yml site.yml
+    ```
+
+Currently this process is not foolproof because a baseline of stability
+from which to automate changes has not yet been defined.  Consider the
+above to probably work, and expect to roll up your sleeves and have to
+do some work.
 
 Purging
 -------------------
-Destroying a [Ceph] cluster requires specifying the `fsid` of the
-cluster to destroy, as well as passing a tag that confirms you really
-want to purge.
-
-```sh
-$ ansible-playbook -i inventory.yml site.purge.yml \
-  --extra-vars "cephadm_cluster_fsid=<fsid>" \
-  --tags yes-i-really-really-mean-it
-```
+Destroying a [Ceph] cluster requires using `cephadm rm-cluster` and is
+not handled automatically by this playbook.  The mentioned command does
+simplify the process and handles everything, so there's no real need
+for additional logic to be added to this playbook.
 
 [cephadm-ansible]: https://github.com/jcmdln/cephadm-ansible
 
