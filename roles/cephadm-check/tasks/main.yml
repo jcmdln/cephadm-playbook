@@ -1,16 +1,16 @@
 ---
 # cephadm-check/tasks/main.yml
 
-- name: Check if Python 3 is present
-  raw: |-
-    command -v python3
-  changed_when: false
+- name: Install Python 3 if missing
+  package:
+    name: "python3"
+    state: present
 
 - name: Gather facts
   setup:
     gather_subset: all
 
-- name: check if host OS is supported
+- name: Check if host OS is supported
   fail:
     msg: >-
       Host OS {{ ansible_distribution }} {{ ansible_distribution_release }}
@@ -19,8 +19,7 @@
       for more information.
   failed_when: >-
     ansible_distribution not in targets.keys()
-    or ansible_distribution_release not in versions
-    or (ansible_os_family == "RedHat"
+    or (ansible_distribution_release not in versions
     and ansible_distribution_major_version not in versions)
   vars:
     targets:

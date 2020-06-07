@@ -1,0 +1,8 @@
+# vars/RedHat.yml
+
+cephadm_host_packages:
+  - ceph-common
+  - cephadm
+  - epel-release
+  - python3-pip
+  - python3-virtualenv

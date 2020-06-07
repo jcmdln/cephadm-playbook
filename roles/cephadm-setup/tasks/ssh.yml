@@ -38,11 +38,11 @@
   blockinfile:
     block: |
       {% for host in cephadm_hosts | difference(inventory_hostname) %}
-      Host {{ hostname }}
-        HostName {{ target.address }}
-        IdentityFile ~/.ssh/ceph_rsa
-        PreferredAuthentications publickey
-        User root
+      Host {{ hostvars[host]['ansible_hostname'] }}
+          HostName {{ hostvars[host]['ansible_' + interface][ipv].address }}
+          IdentityFile ~/.ssh/cephadm_rsa
+          PreferredAuthentications publickey
+          User root
       {% if not loop.last %}
 
       {% endif %}
@@ -50,7 +50,5 @@
     create: true
     dest: ~/.ssh/config
   vars:
-    hostname: "{{ hostvars[host]['ansible_hostname'] }}"
     interface: "{{ cephadm_network_interface_cluster }}"
     ipv: "{{ cephadm_network_ip_version }}"
-    target: "{{ hostvars[host]['ansible_' + interface][ipv] }}"

@@ -1,14 +1,13 @@
-# all.sample.yml
-#
-# vars are in groups, both in alpha-numerical order.
-#
-##
+# sample.all.yml
 
 #
 # Config
 #
 
-# TODO: Clarify how this works, probably with big warning notices
+# TODO: Clarify how this works, probably with big warning notices and
+# iterative examples that fully explan how the logic is expanded.  I
+# did add some inline comments which should give context clues of how
+# this is parameterized, so hopefully that is good enough for now.
 cephadm_config:
   # Stage to run _AFTER_
   bootstrap:
@@ -16,17 +15,31 @@ cephadm_config:
     osd:
       # ceph osd erasure-code-profile set
       erasure-code-profile:
-        # ceph osd erasure-code-profile set host-jerasure-3-2 ...
-        - name: host-jerasure-3-2
+        # ceph osd erasure-code-profile set host-jerasure-2-1 ...
+        - name: host-jerasure-2-1
           crush_failure_domain: host
           plugin: jerasure
-          k: 3
+          k: 2
+          m: 1
+
+        # ceph osd erasure-code-profile set host-jerasure-4-2 ...
+        - name: host-jerasure-4-2
+          crush_failure_domain: host
+          plugin: jerasure
+          k: 4
           m: 2
 
-        # ceph osd erasure-code-profile set rack-isa-8-3 ...
-        - name: rack-isa-8-3
+        # ceph osd erasure-code-profile set host-jerasure-8-3 ...
+        - name: host-jerasure-8-3
+          crush_failure_domain: host
+          plugin: jerasure
+          k: 8
+          m: 3
+
+        # ceph osd erasure-code-profile set rack-jerasure-8-3 ...
+        - name: rack-jerasure-8-3
           crush_failure_domain: rack
-          plugin: isa
+          plugin: jerasure
           technique: reed_sol_van
           k: 8
           m: 3
@@ -58,8 +71,7 @@ cephadm_dashboard_ssl_key: ""
 # Firewall
 #
 
-# Placeholder
-cephadm_firewall_firewalld: true
+cephadm_firewall_firewalld: false
 
 #
 # Health
@@ -67,25 +79,6 @@ cephadm_firewall_firewalld: true
 
 # Placeholder
 cephadm_health_mon_check: ""
-
-#
-# Host
-#
-
-# Packages that we install using the host package manager.  Right now
-# this is specific to Ubuntu 18.04 LTS, but later I'll hide these bits
-# in a role and "automagically" figure out what should be in place,
-# unless this variable is defined by you.
-cephadm_host_packages:
-  - ceph-common
-  - cephadm
-  - docker.io
-  - python3-pip
-  - python3-virtualenv
-
-# Same with the above.
-cephadm_host_services:
-  - docker
 
 #
 # Mon

@@ -1,9 +1,40 @@
 # packages.yml
 
+- name: Include os_family vars
+  include_vars: "{{ ansible_os_family }}.yml"
+  vars:
+    targets:
+      - Debian
+      - RedHat
+  when: ansible_os_family in targets
+
+- name: (CentOS) Add Ceph repository
+  package:
+    name: "centos-release-ceph-octopus"
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: (CentOS) Add Docker repository
+  yum_repository:
+    name: docker-ce
+    description: Official docker-ce repository
+    file: docker-ce
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+- name: (CentOS) Install Docker
+  raw: >-
+    dnf install -y --nobest docker-ce
+  changed_when: false
+  when: ansible_os_family == "RedHat"
+
 - name: (Debian) Add Ceph key
   apt_key:
     state: present
     url: https://download.ceph.com/keys/release.asc
+  when: ansible_os_family == "Debian"
 
 - name: (Debian) Add Ceph repository
   apt_repository:
@@ -11,12 +42,14 @@
     repo: deb https://download.ceph.com/debian-octopus/ {{ ansible_distribution_release }} main
     state: present
     update_cache: false
+  when: ansible_os_family == "Debian"
 
 - name: (Debian) Update APT cache
   apt:
     cache_valid_time: "900"
     state: present
     update_cache: true
+  when: ansible_os_family == "Debian"
 
 - name: Install packages
   package:

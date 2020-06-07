@@ -10,11 +10,10 @@ happen.
 automating the use of the new [cephadm] script.  The intention is to
 explore creating an alternative to [ceph-ansible] that more closely
 aligns with the needs and deployment strategy employed by
-[kolla-ansible].
-
-This playbook will allow a user to deploy a standalone [Ceph] cluster
-that trivializes integrating with [kolla-ansible], and follows
-official [Ceph] recommended practices by default.
+[kolla-ansible].  This playbook will allow a user to deploy a
+standalone [Ceph] cluster that trivializes integrating with
+[kolla-ansible], and follows official [Ceph] recommended practices by
+default.
 
 If you are new to [Ceph], please see the following:
 * https://docs.ceph.com/docs/octopus/start/hardware-recommendations/
@@ -89,7 +88,6 @@ $ ansible-playbook -i inventory.yml site.purge.yml \
   --extra-vars "cephadm_cluster_fsid=<fsid>" \
   --tags yes-i-really-really-mean-it
 ```
-
 
 [cephadm-ansible]: https://github.com/jcmdln/cephadm-ansible
 
