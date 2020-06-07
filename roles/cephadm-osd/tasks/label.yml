@@ -1,3 +1,5 @@
+# cephadm-osd/tasks/label.yml
+
 - name: Label osd(s) hosts
   command: >-
     ceph orch host label add {{ item }} osd

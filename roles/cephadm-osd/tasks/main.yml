@@ -1,4 +1,4 @@
-# main.yml
+# cephadm-osd/tasks/main.yml
 
 - include: label.yml
   tags: [osd-label, osds-label]

@@ -1,4 +1,4 @@
-# site-deploy.yml
+# site.yml
 
 - name: Prepare
   any_errors_fatal: true
