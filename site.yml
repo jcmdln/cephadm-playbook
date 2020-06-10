@@ -6,7 +6,7 @@
   hosts: all
   roles:
     - role: cephadm-check
-      tags: [always, check, checks]
+      tags: [always, check]
 
     - role: cephadm-setup
       tags: [setup]
@@ -21,16 +21,16 @@
       tags: [bootstrap]
 
     - role: cephadm-dashboard
-      tags: [dashboard, dashboards]
+      tags: [dashboard]
 
     - role: cephadm-mon
-      tags: [mon, mons]
+      tags: [mon]
 
     - role: cephadm-mgr
-      tags: [mgr, mgrs]
+      tags: [mgr]
 
     - role: cephadm-osd
-      tags: [never, osd, osds]
+      tags: [osd]
 
     - role: cephadm-rgw
-      tags: [never, rgw, rgws]
+      tags: [never, rgw]
