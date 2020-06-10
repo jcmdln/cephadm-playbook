@@ -19,9 +19,9 @@
 # cephadm_conf
 #
 
-- name: Set conf facts
+- name: Set config facts
   set_fact:
-    cephadm_config: "{{ cephadm_config | default({}) }}"
+    cephadm_config: "{{ cephadm_config | default([]) }}"
 
 - name: check 'cephadm_config'
   fail:
@@ -29,9 +29,11 @@
       Invalid value for variable 'cephadm_config': {{ cephadm_config }}
 
       Supported types  : mapping
-      Supported values : {}  <- Too many values to list
-      Default value    : {}
-  failed_when: cephadm_config is not mapping
+      Supported values : []  <- Too many values to list
+      Default value    : []
+  failed_when: >-
+    cephadm_config is not iterable
+    or cephadm_config is string
 
 #
 # cephadm_dashboard

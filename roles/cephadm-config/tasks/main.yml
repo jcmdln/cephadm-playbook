@@ -1,0 +1,8 @@
+# cephadm-config/tasks/main.yml
+
+- name: Configure Ceph
+  command: >-
+    ceph osd {{ key[0] }} set
+  changed_when: false
+  with_items:
+    - "{{ cephadm_config }}"

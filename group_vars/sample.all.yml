@@ -4,45 +4,19 @@
 # Config
 #
 
-# TODO: Clarify how this works, probably with big warning notices and
-# iterative examples that fully explan how the logic is expanded.  I
-# did add some inline comments which should give context clues of how
-# this is parameterized, so hopefully that is good enough for now.
 cephadm_config:
-  # Stage to run _AFTER_
-  bootstrap:
-    # ceph osd
-    osd:
-      # ceph osd erasure-code-profile set
-      erasure-code-profile:
-        # ceph osd erasure-code-profile set host-jerasure-2-1 ...
-        - name: host-jerasure-2-1
-          crush_failure_domain: host
-          plugin: jerasure
-          k: 2
-          m: 1
-
-        # ceph osd erasure-code-profile set host-jerasure-4-2 ...
-        - name: host-jerasure-4-2
-          crush_failure_domain: host
-          plugin: jerasure
-          k: 4
-          m: 2
-
-        # ceph osd erasure-code-profile set host-jerasure-8-3 ...
-        - name: host-jerasure-8-3
-          crush_failure_domain: host
-          plugin: jerasure
-          k: 8
-          m: 3
-
-        # ceph osd erasure-code-profile set rack-jerasure-8-3 ...
-        - name: rack-jerasure-8-3
-          crush_failure_domain: rack
-          plugin: jerasure
-          technique: reed_sol_van
-          k: 8
-          m: 3
+  - >-
+    ceph osd erasure-code-profile set host-2-1-jerasure
+    crush-failure-domain=host k=2 m=1 plugin=jerasure
+  - >-
+    ceph osd erasure-code-profile set host-2-2-jerasure
+    crush-failure-domain=host k=2 m=2 plugin=jerasure
+  - >-
+    ceph osd erasure-code-profile set host-4-2-jerasure
+    crush-failure-domain=host k=4 m=2 plugin=jerasure
+  - >-
+    ceph osd erasure-code-profile set host-8-3-jerasure
+    crush-failure-domain=host k=8 m=3 plugin=jerasure
 
 #
 # Dashboard
