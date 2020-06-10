@@ -13,6 +13,7 @@
       {% if item.wal_devices is defined %}
       wal_devices: {{ item.wal_devices }}
       {% endif %}
+    create: true
     path: /etc/ceph/drivegroups/{{ item.service_id }}.yml
   with_items: "{{ cephadm_osd_drivegroups }}"
 
