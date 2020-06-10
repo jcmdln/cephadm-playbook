@@ -1,7 +1,7 @@
 # cephadm-osd/tasks/main.yml
 
 - include: label.yml
-  tags: [osd-label, osds-label]
+  tags: [osd-label]
 
 - include: add.yml
-  tags: [osd-add, osds-add]
+  tags: [osd-add]
