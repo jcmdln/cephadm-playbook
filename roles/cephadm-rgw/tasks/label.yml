@@ -1,0 +1,9 @@
+- name: Label rgw(s) hosts
+  command: >-
+    ceph orch host label add {{ item }} rgw
+  changed_when:
+    - result.rc is defined
+    - result.rc > 0
+  register: result
+  with_items:
+    - "{{ cephadm_hosts_rgws | difference(inventory_hostname) }}"

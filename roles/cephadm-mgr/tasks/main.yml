@@ -1,7 +1,7 @@
 # main.yml
 
 - include: label.yml
-  tags: [mgr-label, mgrs-label]
+  tags: [label-all, label-mgr]
 
 - include: add.yml
-  tags: [mgr-add, mgrs-add]
+  tags: [add-all, add-mgr]
