@@ -29,7 +29,7 @@
       Invalid value for variable 'cephadm_config': {{ cephadm_config }}
 
       Supported types  : mapping
-      Supported values : []  <- Too many values to list
+      Supported values : []  <- Too many possible values to list
       Default value    : []
   failed_when: >-
     cephadm_config is not iterable
@@ -146,7 +146,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ ansible_default_ipv4.interface }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_cluster is not string
 
 - name: check 'cephadm_network_interface_public'
@@ -156,7 +156,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ cephadm_network_interface_cluster }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_public is not string
 
 - name: check 'cephadm_network_interface_mgrs'
@@ -166,7 +166,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ cephadm_network_interface_cluster }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_mgrs is not string
 
 - name: check 'cephadm_network_interface_mons'
@@ -176,7 +176,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ cephadm_network_interface_public }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_mons is not string
 
 - name: check 'cephadm_network_interface_osds'
@@ -187,7 +187,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ cephadm_network_interface_cluster }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_osds is not string
 
 - name: check 'cephadm_network_interface_rgws'
@@ -197,7 +197,7 @@
 
       Supported types  : string
       Supported values : Any quoted network interface name
-      Default value    : "{{ cephadm_network_interface_cluster }}"
+      Default value    : "{{ ansible_default_ipv4.interface }}" from ansible_default_ipv4.interface
   failed_when: cephadm_network_interface_rgws is not string
 
 - name: Set macro 'cephadm_network_interfaces' fact
@@ -245,11 +245,122 @@
       Invalid value for variable 'cephadm_osd_drivegroups': {{ cephadm_osd_drivegroups }}
 
       Supported types  : list
-      Supported values : []  <- Too many values to list
+      Supported values : []  <- Too many possible values to list
       Default value    : []
   failed_when: >-
     cephadm_osd_drivegroups is not iterable
     or cephadm_osd_drivegroups is string
+
+#
+# cephadm_pool
+#
+
+- name: Set Pool facts
+  set_fact:
+    cephadm_pool_default_pg_num: >-
+      {{ cephadm_pool_default_pg_num | default(100) }}
+    cephadm_pool_default_pgp_num: >-
+      {{ cephadm_pool_default_pgp_num | default(100) }}
+    cephadm_pool_default_type: >-
+      {{ cephadm_pool_default_type | default("replicated") }}
+    cephadm_pool_default_application: >-
+      {{ cephadm_pool_default_application | default("rbd") }}
+    cephadm_pool_default_compression: >-
+      {{ cephadm_pool_default_compression | default("raw") }}
+    cephadm_pool_default_autoscale_mode: >-
+      {{ cephadm_pool_default_autoscale_mode | default(true) }}
+    cephadm_pools: "{{ cephadm_pools | default([]) }}"
+
+- name: Set cephadm_pools_list
+  set_fact:
+    cephadm_pools_list: "{{ pools.split(' ') }}"
+  vars:
+    pools: >-
+      {% for pool in cephadm_pools -%}
+      {{ pool.name }}{% if not loop.last %} {% endif %}
+      {%- endfor -%}
+
+- name: check 'cephadm_pool_default_pg_num'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_pg_num': {{ cephadm_pool_default_pg_num }}
+
+      Supported types  : number
+      Supported values : 1 or greater
+      Default value    : 100
+  failed_when: cephadm_pool_default_pg_num|int < 1
+
+- name: check 'cephadm_pool_default_pgp_num'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_pgp_num': {{ cephadm_pool_default_pgp_num }}
+
+      Supported types  : number
+      Supported values : 1 or greater
+      Default value    : 100
+  failed_when: cephadm_pool_default_pgp_num|int < 1
+
+- name: check 'cephadm_pool_default_type'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_type': {{ cephadm_pool_default_type }}
+
+      Supported types  : string
+      Supported values : "replicated", "erasure"
+      Default value    : "replicated"
+  failed_when: >-
+    cephadm_pool_default_type is not string
+    or cephadm_pool_default_type not in ["replicated", "erasure"]
+
+- name: check 'cephadm_pool_default_application'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_application': {{ cephadm_pool_default_application }}
+
+      Supported types  : string
+      Supported values : "rbd", "cephfs", "rgw"
+      Default value    : "rbd"
+  failed_when: >-
+    cephadm_pool_default_application is not string
+    or cephadm_pool_default_application not in ["rbd", "cephfs", "rgw"]
+
+- name: check 'cephadm_pool_default_compression'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_compression': {{ cephadm_pool_default_compression }}
+
+      Supported types  : string
+      Supported values : "raw", "lz4", "zlib", "zstd"
+      Default value    : "raw"
+  failed_when: >-
+    cephadm_pool_default_compression is not string
+    or cephadm_pool_default_compression not in ["raw", "lz4", "zlib", "zstd"]
+
+- name: check 'cephadm_pool_default_autoscale_mode'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pool_default_autoscale_mode': {{ cephadm_pool_default_autoscale_mode }}
+
+      Supported types  : boolean
+      Supported values : true|"on", false|"off", "warn"
+      Default value    : true
+  failed_when: >-
+    (cephadm_pool_default_autoscale_mode is not boolean
+    or cephadm_pool_default_autoscale_mode not in [true, false])
+    and (cephadm_pool_default_autoscale_mode is not string
+    or cephadm_pool_default_autoscale_mode not in ["on", "off", "warn"])
+
+- name: check 'cephadm_pools'
+  fail:
+    msg: |
+      Invalid value for variable 'cephadm_pools': {{ cephadm_pools }}
+
+      Supported types  : list
+      Supported values : []  <- Too many possible values to list
+      Default value    : []
+  failed_when: >-
+    cephadm_pools is not iterable
+    or cephadm_pools is string
 
 #
 # cephadm_rgw
@@ -293,3 +404,76 @@
       Supported values : Any quoted string
       Default value    : "default"
   failed_when: cephadm_rgw_zonegroup is not string
+
+#
+# openstack
+#
+
+- name: Set OpenStack facts
+  set_fact:
+    openstack_enabled: "{{ openstack_enabled | default(false) }}"
+    openstack_keys: "{{ openstack_keys | default([]) }}"
+
+- name: check 'openstack_enabled'
+  fail:
+    msg: |
+      Invalid value for variable 'openstack_enabled': {{ openstack_enabled }}
+
+      Supported types  : boolean
+      Supported values : true, false
+      Default value    : false
+  failed_when: >-
+    openstack_enabled is not boolean
+    or openstack_enabled not in [true, false]
+
+- name: check 'openstack_keys'
+  fail:
+    msg: |
+      Invalid value for variable 'openstack_keys': {{ openstack_keys }}
+
+      Supported types  : list
+      Supported values : []  <- Too many possible values to list
+      Default value    : []
+  failed_when: >-
+    openstack_keys is not iterable
+    or openstack_keys is string
+
+- name: check items in 'openstack_keys'
+  fail:
+    msg: |
+      Invalid value for item in 'openstack_keys': {{ item }}
+
+      Supported types  : mapping, various
+      Supported values : name: string
+                         caps: mapping
+                         mon: mapping
+                         osd: mapping
+                         profile: string
+                         pools: iterable, only strings
+                         mode: "number"
+      Missing pools    : {{item.caps.osd.pools|difference(cephadm_pools_list)}}
+      Default value    : {}  <- Too many possible values to list
+  failed_when: >-
+    item is not mapping
+    or item is string
+    or item.name is not string
+    or "client" not in item.name
+    or item.caps is not mapping
+    or item.caps is string
+    or item.caps.mode is not string
+    or item.caps.mode|int < 1
+    or item.caps.mon is not mapping
+    or item.caps.mon is string
+    or item.caps.mon.profile is not string
+    or item.caps.mon.profile not in ["rbd"]
+    or item.caps.osd is not mapping
+    or item.caps.osd is string
+    or item.caps.osd.profile is not string
+    or item.caps.osd.profile not in ["rbd"]
+    or item.caps.osd.pools is not iterable
+    or item.caps.osd.pools is string
+    or item.caps.osd.pools | difference(cephadm_pools_list)
+  loop_control:
+    label: "{{ item.name }}"
+  with_items:
+    - "{{ openstack_keys }}"

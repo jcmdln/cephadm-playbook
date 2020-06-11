@@ -113,8 +113,60 @@ cephadm_osd_drivegroups:
 # Pools
 #
 
-# placeholder
-cephadm_pools: []
+# These are the defaults for all pools created _by this playbook_, so
+# that we can trim as much verbosity from pool definitions as possible.
+cephadm_pool_default_pg_num: 100
+cephadm_pool_default_pgp_num: 100
+cephadm_pool_default_type: "replicated" # "replicated", "erasure"
+cephadm_pool_default_application: "rbd" # "rbd", "cephfs", "rgw"
+cephadm_pool_default_compression: "raw" # "raw", "lz4", "zlib", "zstd"
+cephadm_pool_default_autoscale_mode: true # "on"|true, "off"|false, "warn"
+
+# The pools listed here are the minimum pools required by OpenStack and
+# should be changed with caution.
+cephadm_pools:
+  - name: "backups"
+  - name: "images"
+  - name: "manilla_data"
+    application: "cephfs"
+  - name: "manilla_metadata"
+    application: "cephfs"
+  - name: "metrics"
+  - name: "vms"
+  - name: "volumes"
+
+#
+# Openstack
+#
+
+openstack_enabled: false
+
+openstack_keys:
+  - name: client.cinder
+    caps:
+      mon: { profile: "rbd" }
+      osd: { profile: "rbd", pools: ["vms", "volumes"] }
+      mode: "0600"
+  - name: client.cinder-backup
+    caps:
+      mon: { profile: "rbd" }
+      osd: { profile: "rbd", pools: ["backups"] }
+      mode: "0600"
+  - name: client.glance
+    caps:
+      mon: { profile: "rbd" }
+      osd: { profile: "rbd", pools: ["images", "volumes"] }
+      mode: "0600"
+  - name: client.gnocchi
+    caps:
+      mon: { profile: "rbd" }
+      osd: { profile: "rbd", pools: ["metrics"] }
+      mode: "0600"
+  - name: client.openstack
+    caps:
+      mon: { profile: "rbd" }
+      osd: { profile: "rbd", pools: ["backups", "images", "vms", "volumes"] }
+      mode: "0600"
 
 #
 # RGW
