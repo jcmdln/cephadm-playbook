@@ -24,7 +24,6 @@
     targets:
       CentOS: ["8"]
       Debian: ["buster"]
-      Fedora: ["32"]
       Ubuntu: ["bionic"]
     versions: "{{ targets[ansible_distribution] }}"
 
