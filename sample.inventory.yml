@@ -1,4 +1,4 @@
-# inventory.sample.yml
+# sample.inventory.yml
 
 # These hosts will have ceph-mgr deployed to them.  In general the
 # Ceph recommendation is to co-mingle ceph-mgr and ceph-mon, but you
