@@ -16,9 +16,9 @@ standalone [Ceph] cluster that trivializes integrating with
 default.
 
 If you are new to [Ceph], please see the following:
-* https://docs.ceph.com/docs/octopus/start/hardware-recommendations/
-* https://docs.ceph.com/docs/octopus/start/os-recommendations/
-* https://docs.ceph.com/docs/octopus/cephadm/
+* https://docs.ceph.com/en/octopus/start/hardware-recommendations/
+* https://docs.ceph.com/en/octopus/start/os-recommendations/
+* https://docs.ceph.com/en/octopus/cephadm/
 
 
 Goals
@@ -50,7 +50,7 @@ Configure
 -------------------
 1. Create your inventory
 
-    Make a copy of `inventory.sample.yml`:
+    Make a copy of `sample.inventory.yml`:
 
     ```sh
     $ cp {sample.,}inventory.yml
@@ -61,10 +61,10 @@ Configure
 
 2. Define your configuration
 
-    Make a copy of `group_vars/all.sample.yml`:
+    Make a copy of `group_vars/sample.all.yml`:
 
     ```sh
-    $ cp group_vars/all{.sample,}.yml
+    $ cp group_vars/{sample.,}all.yml
     ```
 
     Read over the created `group_vars/all.yml` and adjust the variables
@@ -102,9 +102,9 @@ for additional logic to be added to this playbook.
 [cephadm-ansible]: https://github.com/jcmdln/cephadm-ansible
 
 [Ceph]: https://ceph.io/
-[Ceph Orchestrator]: https://docs.ceph.com/docs/octopus/mgr/orchestrator/
-[Ceph Orch]: https://docs.ceph.com/docs/octopus/mgr/orchestrator/
-[cephadm]: https://docs.ceph.com/docs/octopus/cephadm/
+[Ceph Orchestrator]: https://docs.ceph.com/en/octopus/mgr/orchestrator/
+[Ceph Orch]: https://docs.ceph.com/en/octopus/mgr/orchestrator/
+[cephadm]: https://docs.ceph.com/en/octopus/cephadm/
 [ceph-ansible]: https://github.com/ceph/ceph-ansible
 
 [kolla-ansible]: https://github.com/openstack/kolla-ansible

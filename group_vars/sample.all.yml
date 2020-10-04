@@ -98,7 +98,7 @@ cephadm_network_interface_rgws: "{{ cephadm_network_interface_public }}"
 # OSDs
 #
 
-# https://docs.ceph.com/docs/octopus/cephadm/drivegroups/
+# https://docs.ceph.com/en/octopus/cephadm/drivegroups/
 cephadm_osd_drivegroups:
   - service_type: osd
     service_id: default_drive_group
